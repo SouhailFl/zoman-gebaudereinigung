@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://zoman-gebaudereinigung.com/sitemap-index.xml
+
+# Crawl-delay for polite bots
+Crawl-delay: 1
+
+# Disallow admin or private paths (if any)
+# Disallow: /admin/
+# Disallow: /private/

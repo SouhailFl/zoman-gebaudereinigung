@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const currentLang = 'de';
+---
+
+<Layout 
+  title="Unsere Dienstleistungen - Zoman Gebäudereinigung"
+  description="Hausreinigung, Fensterreinigung und Solaranlagenreinigung in Krefeld. Professionell, zuverlässig und zu fairen Preisen."
+  lang={currentLang}
+>
+  <!-- Page Header -->
+  <section class="bg-zoman-navy text-white py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">Unsere Dienstleistungen</h1>
+      <p class="text-xl text-gray-200">Professionelle Reinigung für jeden Bedarf</p>
+    </div>
+  </section>
+
+  <!-- Hausreinigung -->
+  <section id="hausreinigung" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🏠</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Hausreinigung</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Wir bieten umfassende Hausreinigungsdienste für Privathaushalte und Büros. 
+          Unser Team sorgt dafür, dass jeder Raum gründlich gereinigt und desinfiziert wird.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Was ist enthalten:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Staubsaugen und Wischen aller Böden</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Abstauben von Möbeln und Oberflächen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Küche: Arbeitsplatten, Herd, Spüle, Schränke außen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Badezimmer: Toilette, Waschbecken, Dusche/Badewanne, Spiegel</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Müll entleeren</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Preise</p>
+          <p class="text-gray-700">
+            Ab 25€ pro Stunde | Individuelle Pakete verfügbar
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Fensterreinigung -->
+  <section id="fensterreinigung" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🪟</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Fensterreinigung</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Streifenfreie Fensterreinigung für Privathaushalte, Büros und Gewerbeflächen. 
+          Wir reinigen Fenster innen und außen mit professionellen Techniken und Werkzeugen.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Was ist enthalten:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Reinigung der Glasflächen innen und außen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Fensterrahmen und Fensterbänke</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Entfernung von hartnäckigen Flecken</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Professionelle Werkzeuge für streifenfreie Ergebnisse</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Preise</p>
+          <p class="text-gray-700">
+            Ab 3€ pro Fenster (Standard) | Großflächen auf Anfrage
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Solarreinigung -->
+  <section id="solarreinigung" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">☀️</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Solaranlagenreinigung</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Professionelle Reinigung Ihrer Photovoltaik-Module. Verschmutzte Solarpanels 
+          können bis zu 25% weniger Energie produzieren. Wir sorgen für optimale Leistung.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Warum Solarreinigung wichtig ist:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Bis zu 25% höhere Energieausbeute nach der Reinigung</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Entfernung von Staub, Vogelkot, Moos und Pollen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Schonende Reinigung ohne Beschädigung der Module</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Verlängerung der Lebensdauer Ihrer Anlage</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Umweltfreundliche Reinigungsmittel</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Preise</p>
+          <p class="text-gray-700">
+            Individuelle Angebote basierend auf Anlagengröße | Kostenlose Besichtigung
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-gradient-to-r from-zoman-navy to-zoman-cyan text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Interessiert an unseren Dienstleistungen?</h2>
+      <p class="text-xl mb-8">Kontaktieren Sie uns für ein kostenloses Angebot</p>
+      <a 
+        href="/de/contact" 
+        class="inline-block bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+      >
+        Jetzt Kontakt aufnehmen
+      </a>
+    </div>
+  </section>
+</Layout>

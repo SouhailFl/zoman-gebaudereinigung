@@ -1,0 +1,120 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { translations } from '../../content/translations.js';
+
+const t = translations.en;
+const currentLang = 'en';
+---
+
+<Layout 
+  title="Zoman Building Cleaning - Professional Cleaning Services in Krefeld"
+  description="Professional building cleaning, window cleaning, and solar panel cleaning in Krefeld and surroundings. Reliable, thorough, and on time."
+  lang={currentLang}
+>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-zoman-navy to-zoman-cyan text-white py-20">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl">
+        <h1 class="text-5xl font-bold mb-6">
+          Zoman Building Cleaning
+        </h1>
+        <p class="text-xl mb-8 text-gray-100">
+          Professional cleaning services for your home and business in Krefeld
+        </p>
+        <div class="flex gap-4 flex-wrap">
+          <a 
+            href="/en/services" 
+            class="bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+          >
+            Our Services
+          </a>
+          <a 
+            href="/en/contact" 
+            class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-zoman-navy transition"
+          >
+            Contact Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Overview -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+        Our Services
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <ServiceCard 
+          title="House Cleaning"
+          description="Thorough cleaning of your entire house or apartment, from kitchen to bathroom."
+          icon="🏠"
+          link="/en/services#house-cleaning"
+        />
+        <ServiceCard 
+          title="Window Cleaning"
+          description="Streak-free window cleaning for homes and businesses, inside and out."
+          icon="🪟"
+          link="/en/services#window-cleaning"
+        />
+        <ServiceCard 
+          title="Solar Panel Cleaning"
+          description="Professional cleaning of your solar panels for maximum energy efficiency."
+          icon="☀️"
+          link="/en/services#solar-cleaning"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+        Why Choose Zoman?
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-4xl mb-4">✅</div>
+          <h3 class="font-semibold mb-2">Reliable</h3>
+          <p class="text-gray-600">Punctual and on schedule</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">💎</div>
+          <h3 class="font-semibold mb-2">Quality</h3>
+          <p class="text-gray-600">Professional standards</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">🌱</div>
+          <h3 class="font-semibold mb-2">Eco-Friendly</h3>
+          <p class="text-gray-600">Environmentally friendly cleaning products</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">💰</div>
+          <h3 class="font-semibold mb-2">Fair</h3>
+          <p class="text-gray-600">Transparent pricing</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-zoman-cyan text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">
+        Ready for a Clean Environment?
+      </h2>
+      <p class="text-xl mb-8">
+        Contact us today for a no-obligation quote
+      </p>
+      <a 
+        href="/en/contact" 
+        class="inline-block bg-white text-zoman-cyan px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+      >
+        Request a Quote Now
+      </a>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const currentLang = 'en';
+---
+
+<Layout 
+  title="Our Services - Zoman Building Cleaning"
+  description="House cleaning, window cleaning, and solar panel cleaning in Krefeld. Professional, reliable, and at fair prices."
+  lang={currentLang}
+>
+  <!-- Page Header -->
+  <section class="bg-zoman-navy text-white py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">Our Services</h1>
+      <p class="text-xl text-gray-200">Professional cleaning for all your needs</p>
+    </div>
+  </section>
+
+  <!-- House Cleaning -->
+  <section id="house-cleaning" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🏠</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">House Cleaning</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          We offer comprehensive house cleaning services for homes and offices. 
+          Our team ensures every room is thoroughly cleaned and disinfected.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">What's included:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Vacuuming and mopping all floors</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Dusting furniture and surfaces</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Kitchen: countertops, stove, sink, cabinet exteriors</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Bathroom: toilet, sink, shower/bathtub, mirror</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Trash removal</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Pricing</p>
+          <p class="text-gray-700">
+            From €25 per hour | Custom packages available
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Window Cleaning -->
+  <section id="window-cleaning" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🪟</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Window Cleaning</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Streak-free window cleaning for homes, offices, and commercial spaces. 
+          We clean windows inside and out with professional techniques and tools.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">What's included:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Cleaning of glass surfaces inside and out</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Window frames and sills</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Removal of stubborn stains</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Professional tools for streak-free results</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Pricing</p>
+          <p class="text-gray-700">
+            From €3 per window (standard) | Large surfaces on request
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Solar Panel Cleaning -->
+  <section id="solar-cleaning" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">☀️</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Solar Panel Cleaning</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Professional cleaning of your photovoltaic modules. Dirty solar panels 
+          can produce up to 25% less energy. We ensure optimal performance.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Why solar panel cleaning matters:</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Up to 25% higher energy yield after cleaning</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Removal of dust, bird droppings, moss, and pollen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Gentle cleaning without damaging the modules</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Extends the lifespan of your system</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Eco-friendly cleaning products</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Pricing</p>
+          <p class="text-gray-700">
+            Custom quotes based on system size | Free inspection
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-gradient-to-r from-zoman-navy to-zoman-cyan text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Interested in our services?</h2>
+      <p class="text-xl mb-8">Contact us for a free quote</p>
+      <a 
+        href="/en/contact" 
+        class="inline-block bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+      >
+        Contact Us Now
+      </a>
+    </div>
+  </section>
+</Layout>

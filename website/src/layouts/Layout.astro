@@ -1,0 +1,175 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ChatWidget from '../components/ChatWidget.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'de' | 'en' | 'fr';
+}
+
+const { title, description, lang = 'de' } = Astro.props as Props;
+const currentUrl = Astro.url.pathname;
+
+// Language alternatives for hreflang
+const languages = ['de', 'en', 'fr'] as const;
+const pathWithoutLang = currentUrl.replace(/^\/(de|en|fr)/, '') || '/';
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary Meta Tags -->
+  <title>{title}</title>
+  <meta name="title" content={title} />
+  <meta name="description" content={description} />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href={`https://zoman-gebaudereinigung.de${currentUrl}`} />
+  
+  <!-- Hreflang for SEO -->
+  {languages.map(l => (
+    <link rel="alternate" hreflang={l} href={`https://zoman-gebaudereinigung.de/${l}${pathWithoutLang}`} />
+  ))}
+  <link rel="alternate" hreflang="x-default" href={`https://zoman-gebaudereinigung.de/de${pathWithoutLang}`} />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`https://zoman-gebaudereinigung.de${currentUrl}`} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="https://zoman-gebaudereinigung.de/og-image.jpg" />
+  <meta property="og:locale" content={lang === 'de' ? 'de_DE' : lang === 'en' ? 'en_US' : 'fr_FR'} />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={`https://zoman-gebaudereinigung.de${currentUrl}`} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content="https://zoman-gebaudereinigung.de/twitter-image.jpg" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <!-- Fonts (Optional - using system fonts for performance) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- JSON-LD Structured Data for Local Business -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Zoman Gebäudereinigung",
+    "image": "https://zoman-gebaudereinigung.de/logo.jpg",
+    "@id": "https://zoman-gebaudereinigung.de",
+    "url": "https://zoman-gebaudereinigung.de",
+    "telephone": "+491234567890",
+    "priceRange": "€€",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Krefeld",
+      "addressLocality": "Krefeld",
+      "postalCode": "47798",
+      "addressCountry": "DE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 51.3387609,
+      "longitude": 6.5852796
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Saturday",
+        "opens": "09:00",
+        "closes": "14:00"
+      }
+    ],
+    "sameAs": [
+      "https://facebook.com/zoman",
+      "https://instagram.com/zoman"
+    ]
+  })} />
+  
+  <!-- Performance & SEO -->
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="theme-color" content="#00B5FF" />
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <Header lang={lang} />
+  
+  <main class="flex-grow">
+    <slot />
+  </main>
+  
+  <Footer lang={lang} />
+
+  <!-- 
+  ⚠️ FUTURE: Chat Widget Integration
+  When agent-service is ready, uncomment this section:
+  
+  <div id="chat-widget" class="fixed bottom-6 right-6 z-50">
+    <button 
+      id="chat-button"
+      class="bg-zoman-cyan text-white rounded-full p-4 shadow-lg hover:bg-opacity-90 transition"
+    >
+      💬
+    </button>
+  </div>
+  
+  <script>
+    // Chat widget will connect to agent-service endpoint
+    // Example: http://localhost:3002/api/chat
+  </script>
+  -->
+  <ChatWidget lang={lang} />
+</body>
+</html>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #00B5FF;
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0B2545;
+  }
+</style>

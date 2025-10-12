@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+
+const currentLang = 'fr';
+---
+
+<Layout 
+  title="Contact - Zoman Nettoyage de Bâtiments"
+  description="Contactez Zoman Nettoyage de Bâtiments à Krefeld. Téléphone, e-mail ou formulaire de contact - nous sommes à votre disposition."
+  lang={currentLang}
+>
+  <!-- Page Header -->
+  <section class="bg-zoman-navy text-white py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">Contact</h1>
+      <p class="text-xl text-gray-200">Nous sommes impatients de recevoir votre message</p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        
+        <!-- Contact Information -->
+        <div>
+          <h2 class="text-2xl font-bold mb-6 text-zoman-navy">Informations de contact</h2>
+          
+          <div class="space-y-6 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="text-2xl">📍</div>
+              <div>
+                <h3 class="font-semibold mb-1">Adresse</h3>
+                <p class="text-gray-700">
+                  Zoman Nettoyage de Bâtiments<br />
+                  Krefeld, Allemagne
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-2xl">📞</div>
+              <div>
+                <h3 class="font-semibold mb-1">Téléphone</h3>
+                <a href="tel:+491234567890" class="text-zoman-cyan hover:underline">
+                  +49 123 456 7890
+                </a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-2xl">✉️</div>
+              <div>
+                <h3 class="font-semibold mb-1">E-mail</h3>
+                <a href="mailto:info@zoman-nettoyage.fr" class="text-zoman-cyan hover:underline">
+                  info@zoman-nettoyage.fr
+                </a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-2xl">🕐</div>
+              <div>
+                <h3 class="font-semibold mb-1">Horaires d'ouverture</h3>
+                <p class="text-gray-700">
+                  Lundi - Vendredi : 8h00 - 18h00<br />
+                  Samedi : 9h00 - 14h00<br />
+                  Dimanche : Fermé
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Google Maps Embed -->
+          <div class="rounded-lg overflow-hidden shadow-lg">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2486.7849674886984!2d6.565296!3d51.336389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b8a7e8e8e8e8e8%3A0x0!2sKrefeld!5e0!3m2!1sfr!2sfr!4v1234567890"
+              width="100%" 
+              height="300" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy"
+              title="Zoman Nettoyage de Bâtiments à Krefeld"
+            ></iframe>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div>
+          <h2 class="text-2xl font-bold mb-6 text-zoman-navy">Envoyez-nous un message</h2>
+          <ContactForm lang={currentLang} />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Info Box -->
+  <section class="bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-2xl font-bold mb-4 text-zoman-navy">Réponses rapides</h2>
+        <p class="text-gray-700 text-lg">
+          Nous nous efforçons de répondre à toutes les demandes dans les 24 heures. 
+          Pour les demandes urgentes, veuillez nous appeler directement.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>

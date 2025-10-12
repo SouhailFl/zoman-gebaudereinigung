@@ -1,0 +1,120 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { translations } from '../../content/translations.js';
+
+const t = translations.de;
+const currentLang = 'de';
+---
+
+<Layout 
+  title="Zoman Gebäudereinigung - Professionelle Reinigungsdienste in Krefeld"
+  description="Professionelle Gebäudereinigung, Fensterreinigung und Solaranlagenreinigung in Krefeld und Umgebung. Zuverlässig, gründlich und termingerecht."
+  lang={currentLang}
+>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-zoman-navy to-zoman-cyan text-white py-20">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl">
+        <h1 class="text-5xl font-bold mb-6">
+          Zoman Gebäudereinigung
+        </h1>
+        <p class="text-xl mb-8 text-gray-100">
+          Professionelle Reinigungsdienste für Ihr Zuhause und Unternehmen in Krefeld
+        </p>
+        <div class="flex gap-4 flex-wrap">
+          <a 
+            href="/de/services" 
+            class="bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+          >
+            Unsere Dienstleistungen
+          </a>
+          <a 
+            href="/de/contact" 
+            class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-zoman-navy transition"
+          >
+            Kontakt aufnehmen
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Overview -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+        Unsere Dienstleistungen
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <ServiceCard 
+          title="Hausreinigung"
+          description="Gründliche Reinigung Ihres gesamten Hauses oder Ihrer Wohnung. Von der Küche bis zum Badezimmer."
+          icon="🏠"
+          link="/de/services#hausreinigung"
+        />
+        <ServiceCard 
+          title="Fensterreinigung"
+          description="Streifenfreie Fensterreinigung für Privathaushalte und Gewerbe. Innen und außen."
+          icon="🪟"
+          link="/de/services#fensterreinigung"
+        />
+        <ServiceCard 
+          title="Solaranlagenreinigung"
+          description="Professionelle Reinigung Ihrer Solarmodule für maximale Energieeffizienz."
+          icon="☀️"
+          link="/de/services#solarreinigung"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+        Warum Zoman wählen?
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-4xl mb-4">✅</div>
+          <h3 class="font-semibold mb-2">Zuverlässig</h3>
+          <p class="text-gray-600">Pünktlich und termingerecht</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">💎</div>
+          <h3 class="font-semibold mb-2">Qualität</h3>
+          <p class="text-gray-600">Professionelle Standards</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">🌱</div>
+          <h3 class="font-semibold mb-2">Umweltfreundlich</h3>
+          <p class="text-gray-600">Ökologische Reinigungsmittel</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl mb-4">💰</div>
+          <h3 class="font-semibold mb-2">Fair</h3>
+          <p class="text-gray-600">Transparente Preise</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-zoman-cyan text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">
+        Bereit für eine saubere Umgebung?
+      </h2>
+      <p class="text-xl mb-8">
+        Kontaktieren Sie uns noch heute für ein unverbindliches Angebot
+      </p>
+      <a 
+        href="/de/contact" 
+        class="inline-block bg-white text-zoman-cyan px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+      >
+        Jetzt Angebot anfordern
+      </a>
+    </div>
+  </section>
+</Layout>

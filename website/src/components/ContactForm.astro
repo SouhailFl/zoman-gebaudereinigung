@@ -1,0 +1,221 @@
+---
+interface Props {
+  lang?: 'de' | 'en' | 'fr';
+}
+
+const { lang = 'de' } = Astro.props as Props;
+
+const formLabels: Record<string, {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  submit: string;
+  namePlaceholder: string;
+  emailPlaceholder: string;
+  subjectPlaceholder: string;
+  messagePlaceholder: string;
+  success: string;
+  error: string;
+  sending: string;
+}> = {
+  de: {
+    name: 'Name',
+    email: 'E-Mail',
+    subject: 'Betreff',
+    message: 'Nachricht',
+    submit: 'Nachricht senden',
+    sending: 'Wird gesendet...',
+    namePlaceholder: 'Ihr Name',
+    emailPlaceholder: 'ihre.email@beispiel.de',
+    subjectPlaceholder: 'Worum geht es?',
+    messagePlaceholder: 'Ihre Nachricht an uns...',
+    success: 'Nachricht erfolgreich gesendet! Wir melden uns bald bei Ihnen.',
+    error: 'Fehler beim Senden. Bitte versuchen Sie es erneut oder rufen Sie uns an.'
+  },
+  en: {
+    name: 'Name',
+    email: 'Email',
+    subject: 'Subject',
+    message: 'Message',
+    submit: 'Send Message',
+    sending: 'Sending...',
+    namePlaceholder: 'Your Name',
+    emailPlaceholder: 'your.email@example.com',
+    subjectPlaceholder: 'What is this about?',
+    messagePlaceholder: 'Your message to us...',
+    success: 'Message sent successfully! We will get back to you soon.',
+    error: 'Error sending message. Please try again or call us.'
+  },
+  fr: {
+    name: 'Nom',
+    email: 'E-mail',
+    subject: 'Sujet',
+    message: 'Message',
+    submit: 'Envoyer le message',
+    sending: 'Envoi en cours...',
+    namePlaceholder: 'Votre nom',
+    emailPlaceholder: 'votre.email@exemple.fr',
+    subjectPlaceholder: 'De quoi s\'agit-il?',
+    messagePlaceholder: 'Votre message...',
+    success: 'Message envoyé avec succès! Nous vous répondrons bientôt.',
+    error: 'Erreur lors de l\'envoi. Veuillez réessayer ou nous appeler.'
+  }
+};
+
+const t = formLabels[lang] || formLabels.de;
+
+// Email service URL - change to production URL when deployed
+const EMAIL_SERVICE_URL = import.meta.env.PUBLIC_EMAIL_SERVICE_URL || 'http://localhost:3001';
+---
+
+<form id="contact-form" class="space-y-4">
+  
+  <!-- Name Field -->
+  <div>
+    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+      {t.name} *
+    </label>
+    <input 
+      type="text" 
+      id="name" 
+      name="name" 
+      required
+      placeholder={t.namePlaceholder}
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-zoman-cyan focus:border-transparent outline-none transition"
+    />
+  </div>
+
+  <!-- Email Field -->
+  <div>
+    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+      {t.email} *
+    </label>
+    <input 
+      type="email" 
+      id="email" 
+      name="email" 
+      required
+      placeholder={t.emailPlaceholder}
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-zoman-cyan focus:border-transparent outline-none transition"
+    />
+  </div>
+
+  <!-- Subject Field -->
+  <div>
+    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
+      {t.subject} *
+    </label>
+    <input 
+      type="text" 
+      id="subject" 
+      name="subject" 
+      required
+      placeholder={t.subjectPlaceholder}
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-zoman-cyan focus:border-transparent outline-none transition"
+    />
+  </div>
+
+  <!-- Message Field -->
+  <div>
+    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
+      {t.message} *
+    </label>
+    <textarea 
+      id="message" 
+      name="message" 
+      required
+      rows="5"
+      placeholder={t.messagePlaceholder}
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-zoman-cyan focus:border-transparent outline-none transition resize-none"
+    ></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <button 
+    type="submit"
+    id="submit-btn"
+    class="w-full bg-zoman-cyan text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    {t.submit}
+  </button>
+
+  <!-- Status Messages -->
+  <div id="form-status" class="hidden"></div>
+
+</form>
+
+<script define:vars={{ t, EMAIL_SERVICE_URL }}>
+  const form = document.getElementById('contact-form');
+  const statusDiv = document.getElementById('form-status');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message')
+    };
+
+    // Disable submit button and show loading
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = t.sending;
+    }
+
+    // Hide any previous status messages
+    statusDiv?.classList.add('hidden');
+
+    try {
+      // Send to email service
+      const response = await fetch(`${EMAIL_SERVICE_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Success
+        if (statusDiv) {
+          statusDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded';
+          statusDiv.textContent = t.success;
+          statusDiv.classList.remove('hidden');
+        }
+        
+        // Reset form
+        form.reset();
+
+        // Hide success message after 10 seconds
+        setTimeout(() => {
+          statusDiv?.classList.add('hidden');
+        }, 10000);
+      } else {
+        // Error from server
+        throw new Error(result.message || 'Failed to send email');
+      }
+    } catch (error) {
+      // Network or other error
+      console.error('Form submission error:', error);
+      
+      if (statusDiv) {
+        statusDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded';
+        statusDiv.textContent = t.error;
+        statusDiv.classList.remove('hidden');
+      }
+    } finally {
+      // Re-enable button
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = t.submit;
+      }
+    }
+  });
+</script>

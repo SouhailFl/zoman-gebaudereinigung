@@ -1,0 +1,142 @@
+---
+interface Props {
+  lang?: 'de' | 'en' | 'fr';
+}
+
+const { lang = 'de' } = Astro.props as Props;
+
+const languages = [
+  { code: 'de', name: 'Deutsch'},
+  { code: 'en', name: 'English'},
+  { code: 'fr', name: 'Français'}
+] as const;
+
+const currentPath = Astro.url.pathname;
+const pathWithoutLang = currentPath.replace(/^\/(de|en|fr)/, '');
+
+// Navigation items based on language
+const navItems: Record<string, Array<{ label: string; href: string }>> = {
+  de: [
+    { label: 'Start', href: '/de/' },
+    { label: 'Dienstleistungen', href: '/de/services' },
+    { label: 'Kontakt', href: '/de/contact' }
+  ],
+  en: [
+    { label: 'Home', href: '/en/' },
+    { label: 'Services', href: '/en/services' },
+    { label: 'Contact', href: '/en/contact' }
+  ],
+  fr: [
+    { label: 'Accueil', href: '/fr/' },
+    { label: 'Services', href: '/fr/services' },
+    { label: 'Contact', href: '/fr/contact' }
+  ]
+};
+
+const nav = navItems[lang] || navItems.de;
+---
+
+<header class="bg-white shadow-md sticky top-0 z-50">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo -->
+      <a href={`/${lang}/`} class="flex items-center gap-2 font-bold text-xl text-zoman-navy">
+        <span class="text-2xl">✨</span>
+        <span>Zoman</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-8">
+        {nav.map((item: { label: string; href: string }) => (
+          <a 
+            href={item.href} 
+            class="text-gray-700 hover:text-zoman-cyan transition font-medium"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Language Switcher + Mobile Menu Button -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Language Dropdown -->
+        <div class="relative language-switcher">
+          <button 
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+            id="lang-button"
+          >
+          <span class="text-sm font-medium hidden sm:inline">{languages.find(l => l.code === lang)?.code.toUpperCase()}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          
+          <div 
+            class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden"
+            id="lang-menu"
+          >
+            {languages.map(language => (
+              <a 
+                href={`/${language.code}${pathWithoutLang || '/'}`}
+                class={`flex items-center gap-3 px-4 py-2 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${lang === language.code ? 'bg-zoman-cyan bg-opacity-10 text-zoman-cyan font-semibold' : ''}`}
+              >
+              <span class="text-sm">{language.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button 
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          id="mobile-menu-button"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden hidden pb-4" id="mobile-menu">
+      {nav.map((item: { label: string; href: string }) => (
+        <a 
+          href={item.href} 
+          class="block py-2 text-gray-700 hover:text-zoman-cyan transition font-medium"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+  </div>
+</header>
+
+<script>
+  // Language Switcher Toggle
+  const langButton = document.getElementById('lang-button');
+  const langMenu = document.getElementById('lang-menu');
+  
+  langButton?.addEventListener('click', () => {
+    langMenu?.classList.toggle('hidden');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!langButton?.contains(e.target as Node) && !langMenu?.contains(e.target as Node)) {
+      langMenu?.classList.add('hidden');
+    }
+  });
+
+  // Mobile Menu Toggle
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  mobileMenuButton?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

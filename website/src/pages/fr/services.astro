@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const currentLang = 'fr';
+---
+
+<Layout 
+  title="Nos Services - Zoman Nettoyage de Bâtiments"
+  description="Nettoyage de maison, de vitres et de panneaux solaires à Krefeld. Professionnel, fiable et à des prix équitables."
+  lang={currentLang}
+>
+  <!-- Page Header -->
+  <section class="bg-zoman-navy text-white py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">Nos Services</h1>
+      <p class="text-xl text-gray-200">Nettoyage professionnel pour tous vos besoins</p>
+    </div>
+  </section>
+
+  <!-- Nettoyage de maison -->
+  <section id="nettoyage-maison" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🏠</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Nettoyage de maison</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Nous proposons des services complets de nettoyage de maison pour les particuliers et les bureaux. 
+          Notre équipe veille à ce que chaque pièce soit soigneusement nettoyée et désinfectée.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Ce qui est inclus :</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Aspiration et lavage de tous les sols</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Dépoussiérage des meubles et surfaces</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Cuisine : plans de travail, cuisinière, évier, placards extérieurs</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Salle de bain : toilettes, lavabo, douche/baignoire, miroir</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Vidage des poubelles</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Tarifs</p>
+          <p class="text-gray-700">
+            À partir de 25€ par heure | Forfaits personnalisés disponibles
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Nettoyage de vitres -->
+  <section id="nettoyage-vitres" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🪟</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Nettoyage de vitres</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Nettoyage de vitres sans traces pour les particuliers, bureaux et surfaces commerciales. 
+          Nous nettoyons les vitres à l'intérieur et à l'extérieur avec des techniques et outils professionnels.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Ce qui est inclus :</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Nettoyage des surfaces vitrées à l'intérieur et à l'extérieur</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Cadres et rebords de fenêtres</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Élimination des taches tenaces</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Outils professionnels pour des résultats sans traces</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Tarifs</p>
+          <p class="text-gray-700">
+            À partir de 3€ par fenêtre (standard) | Grandes surfaces sur demande
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="container mx-auto" />
+
+  <!-- Nettoyage de panneaux solaires -->
+  <section id="nettoyage-solaire" class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">☀️</span>
+          <h2 class="text-3xl font-bold text-zoman-navy">Nettoyage de panneaux solaires</h2>
+        </div>
+        <p class="text-lg text-gray-700 mb-6">
+          Nettoyage professionnel de vos modules photovoltaïques. Les panneaux solaires encrassés 
+          peuvent produire jusqu'à 25 % d'énergie en moins. Nous optimisons leur performance.
+        </p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="font-semibold text-xl mb-4">Pourquoi le nettoyage des panneaux solaires est important :</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Jusqu'à 25 % de rendement énergétique supplémentaire après le nettoyage</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Élimination de la poussière, des fientes d'oiseaux, de la mousse et du pollen</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Nettoyage en douceur sans endommager les modules</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Prolongation de la durée de vie de votre installation</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-zoman-cyan mt-1">✓</span>
+              <span>Produits de nettoyage respectueux de l'environnement</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-zoman-cyan bg-opacity-10 border-l-4 border-zoman-cyan p-6 rounded">
+          <p class="font-semibold text-lg mb-2">💰 Tarifs</p>
+          <p class="text-gray-700">
+            Devis personnalisés selon la taille de l'installation | Visite gratuite
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-gradient-to-r from-zoman-navy to-zoman-cyan text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Intéressé par nos services ?</h2>
+      <p class="text-xl mb-8">Contactez-nous pour un devis gratuit</p>
+      <a 
+        href="/fr/contact" 
+        class="inline-block bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+      >
+        Nous contacter maintenant
+      </a>
+    </div>
+  </section>
+</Layout>
