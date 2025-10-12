@@ -1,0 +1,54 @@
+name: Deploy Containers to Azure
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy-email-service:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Email Service to Azure Container Apps
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name zoman-email-service \
+              --resource-group zoman-rg \
+              --image ghcr.io/${{ github.repository_owner }}/zoman-email-service:latest \
+              --set-env-vars \
+                MAILTRAP_HOST=secretref:mailtrap-host \
+                MAILTRAP_PORT=2525 \
+                MAILTRAP_USER=secretref:mailtrap-user \
+                MAILTRAP_PASS=secretref:mailtrap-pass
+
+  deploy-agent-service:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Agent Service to Azure Container Apps
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name zoman-agent-service \
+              --resource-group zoman-rg \
+              --image ghcr.io/${{ github.repository_owner }}/zoman-agent-service:latest \
+              --set-env-vars \
+                OPENAI_API_KEY=secretref:openai-key
