@@ -11,9 +11,10 @@ export default defineConfig({
   // Build configuration
   build: {
     format: 'directory', // Creates /page/ instead of /page.html
+    inlineStylesheets: 'auto', // ✨ Inline critical CSS automatically for better LCP
   },
   
-  // i18n configuration (optional but recommended)
+  // i18n configuration
   i18n: {
     defaultLocale: 'de',
     locales: ['de', 'en', 'fr'],
@@ -24,11 +25,27 @@ export default defineConfig({
 
   // Output mode
   output: 'static',
+  
+  // ✨ Enable HTML compression (safe optimization)
+  compressHTML: true,
 
-  // Vite configuration for development
+  // Vite configuration
   vite: {
     server: {
       port: 4321,
-    }
+    },
+    build: {
+      // ✨ Split CSS per page for better caching
+      cssCodeSplit: true,
+      
+      // ✨ Better file naming for cache busting
+      rollupOptions: {
+        output: {
+          entryFileNames: 'entry.[hash].js',
+          chunkFileNames: 'chunks/[name].[hash].js',
+          assetFileNames: 'assets/[name].[hash][extname]',
+        }
+      },
+    },
   }
 });

@@ -34,24 +34,73 @@ const navItems: Record<string, Array<{ label: string; href: string }>> = {
 };
 
 const nav = navItems[lang] || navItems.de;
+
+// Accessibility labels
+const a11yLabels = {
+  de: {
+    skipLink: 'Zum Hauptinhalt springen',
+    logo: 'Zoman Gebäudereinigung Startseite',
+    mainNav: 'Hauptnavigation',
+    langSwitch: 'Sprache wechseln',
+    currentLang: 'Aktuelle Sprache',
+    mobileMenu: 'Mobile Navigation öffnen',
+    mobileMenuClose: 'Mobile Navigation schließen'
+  },
+  en: {
+    skipLink: 'Skip to main content',
+    logo: 'Zoman Building Cleaning Home',
+    mainNav: 'Main navigation',
+    langSwitch: 'Switch language',
+    currentLang: 'Current language',
+    mobileMenu: 'Open mobile menu',
+    mobileMenuClose: 'Close mobile menu'
+  },
+  fr: {
+    skipLink: 'Aller au contenu principal',
+    logo: 'Accueil Zoman Nettoyage',
+    mainNav: 'Navigation principale',
+    langSwitch: 'Changer de langue',
+    currentLang: 'Langue actuelle',
+    mobileMenu: 'Ouvrir le menu mobile',
+    mobileMenuClose: 'Fermer le menu mobile'
+  }
+};
+
+const labels = a11yLabels[lang] || a11yLabels.de;
 ---
+
+<!-- ✨ Skip Link for keyboard users -->
+<a 
+  href="#main-content" 
+  class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:bg-zoman-cyan focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+>
+  {labels.skipLink}
+</a>
 
 <header class="bg-white shadow-md sticky top-0 z-50">
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between h-16">
       
       <!-- Logo -->
-      <a href={`/${lang}/`} class="flex items-center gap-2 font-bold text-xl text-zoman-navy">
-        <span class="text-2xl">✨</span>
+      <a 
+        href={`/${lang}/`} 
+        class="flex items-center gap-2 font-bold text-xl text-zoman-navy focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded-lg"
+        aria-label={labels.logo}
+      >
+        <span class="text-2xl" aria-hidden="true">✨</span>
         <span>Zoman</span>
       </a>
 
       <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center gap-8">
+      <nav 
+        class="hidden md:flex items-center gap-8" 
+        aria-label={labels.mainNav}
+      >
         {nav.map((item: { label: string; href: string }) => (
           <a 
             href={item.href} 
-            class="text-gray-700 hover:text-zoman-cyan transition font-medium"
+            class="text-gray-700 hover:text-zoman-cyan transition font-medium focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded px-2 py-1"
+            aria-current={currentPath === item.href ? 'page' : undefined}
           >
             {item.label}
           </a>
@@ -64,11 +113,17 @@ const nav = navItems[lang] || navItems.de;
         <!-- Language Dropdown -->
         <div class="relative language-switcher">
           <button 
-            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-zoman-cyan"
             id="lang-button"
+            aria-label={labels.langSwitch}
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="lang-menu"
           >
-          <span class="text-sm font-medium hidden sm:inline">{languages.find(l => l.code === lang)?.code.toUpperCase()}</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="text-sm font-medium hidden sm:inline">
+              {languages.find(l => l.code === lang)?.code.toUpperCase()}
+            </span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
             </svg>
           </button>
@@ -76,13 +131,18 @@ const nav = navItems[lang] || navItems.de;
           <div 
             class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden"
             id="lang-menu"
+            role="menu"
+            aria-label={labels.langSwitch}
           >
             {languages.map(language => (
               <a 
                 href={`/${language.code}${pathWithoutLang || '/'}`}
-                class={`flex items-center gap-3 px-4 py-2 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${lang === language.code ? 'bg-zoman-cyan bg-opacity-10 text-zoman-cyan font-semibold' : ''}`}
+                class={`flex items-center gap-3 px-4 py-2 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition focus:outline-none focus:bg-gray-100 ${lang === language.code ? 'bg-zoman-cyan bg-opacity-10 text-zoman-cyan font-semibold' : ''}`}
+                role="menuitem"
+                aria-current={lang === language.code ? 'true' : undefined}
+                lang={language.code}
               >
-              <span class="text-sm">{language.name}</span>
+                <span class="text-sm">{language.name}</span>
               </a>
             ))}
           </div>
@@ -90,11 +150,17 @@ const nav = navItems[lang] || navItems.de;
 
         <!-- Mobile Menu Button -->
         <button 
-          class="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-zoman-cyan"
           id="mobile-menu-button"
+          aria-label={labels.mobileMenu}
+          aria-expanded="false"
+          aria-controls="mobile-menu"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" id="menu-icon">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" id="close-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
@@ -102,11 +168,16 @@ const nav = navItems[lang] || navItems.de;
     </div>
 
     <!-- Mobile Navigation -->
-    <nav class="md:hidden hidden pb-4" id="mobile-menu">
+    <nav 
+      class="md:hidden hidden pb-4" 
+      id="mobile-menu"
+      aria-label={labels.mainNav}
+    >
       {nav.map((item: { label: string; href: string }) => (
         <a 
           href={item.href} 
-          class="block py-2 text-gray-700 hover:text-zoman-cyan transition font-medium"
+          class="block py-2 text-gray-700 hover:text-zoman-cyan transition font-medium focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded px-2"
+          aria-current={currentPath === item.href ? 'page' : undefined}
         >
           {item.label}
         </a>
@@ -122,6 +193,8 @@ const nav = navItems[lang] || navItems.de;
   const langMenu = document.getElementById('lang-menu');
   
   langButton?.addEventListener('click', () => {
+    const isExpanded = langButton.getAttribute('aria-expanded') === 'true';
+    langButton.setAttribute('aria-expanded', (!isExpanded).toString());
     langMenu?.classList.toggle('hidden');
   });
 
@@ -129,14 +202,69 @@ const nav = navItems[lang] || navItems.de;
   document.addEventListener('click', (e) => {
     if (!langButton?.contains(e.target as Node) && !langMenu?.contains(e.target as Node)) {
       langMenu?.classList.add('hidden');
+      langButton?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Close dropdown with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && langMenu && !langMenu.classList.contains('hidden')) {
+      langMenu.classList.add('hidden');
+      langButton?.setAttribute('aria-expanded', 'false');
+      langButton?.focus();
     }
   });
 
   // Mobile Menu Toggle
   const mobileMenuButton = document.getElementById('mobile-menu-button');
   const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
   
   mobileMenuButton?.addEventListener('click', () => {
+    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+    mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
     mobileMenu?.classList.toggle('hidden');
+    
+    // Toggle icons
+    menuIcon?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+  });
+
+  // Close mobile menu with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+      mobileMenuButton?.setAttribute('aria-expanded', 'false');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      mobileMenuButton?.focus();
+    }
   });
 </script>
+
+<style>
+  /* Screen reader only class */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+</style>
