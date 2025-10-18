@@ -35,6 +35,7 @@ jobs:
         working-directory: ./website
         env:
           PUBLIC_EMAIL_SERVICE_URL: ${{ secrets.EMAIL_SERVICE_URL }}
+          PUBLIC_HCAPTCHA_SITE_KEY: ${{ secrets.PUBLIC_HCAPTCHA_SITE_KEY }}
           PUBLIC_AGENT_SERVICE_URL: ${{ secrets.AGENT_SERVICE_URL }}
         run: npm run build
 
