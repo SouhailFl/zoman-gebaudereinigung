@@ -28,10 +28,29 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', service: 'email' });
 });
 
+// Verify hCaptcha token with hCaptcha API
+async function verifyCaptcha(token) {
+  try {
+    const response = await fetch('https://api.hcaptcha.com/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `response=${token}&secret=${process.env.HCAPTCHA_SECRET_KEY}`,
+    });
+
+    const data = await response.json();
+    return data.success;
+  } catch (error) {
+    console.error('❌ Captcha verification error:', error);
+    return false;
+  }
+}
+
 // Contact form endpoint
 app.post('/api/contact', async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, captchaToken } = req.body;
 
     // Validation
     if (!name || !email || !subject || !message) {
@@ -48,6 +67,17 @@ app.post('/api/contact', async (req, res) => {
         success: false,
         message: 'Invalid email address',
       });
+    }
+
+    // Verify captcha if token is provided
+    if (captchaToken) {
+      const isCaptchaValid = await verifyCaptcha(captchaToken);
+      if (!isCaptchaValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Captcha verification failed. Please try again.',
+        });
+      }
     }
 
     // Send email

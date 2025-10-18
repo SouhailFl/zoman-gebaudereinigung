@@ -6,6 +6,9 @@ services:
     build:
       context: ./website
       dockerfile: Dockerfile
+      args:
+        - PUBLIC_HCAPTCHA_SITE_KEY=${PUBLIC_HCAPTCHA_SITE_KEY}
+        - PUBLIC_EMAIL_SERVICE_URL=${PUBLIC_EMAIL_SERVICE_URL}
     container_name: zoman-website
     ports:
       - "8080:80"
@@ -29,6 +32,7 @@ services:
       - MAILTRAP_PORT=${MAILTRAP_PORT}
       - MAILTRAP_USER=${MAILTRAP_USER}
       - MAILTRAP_PASS=${MAILTRAP_PASS}
+      - HCAPTCHA_SECRET_KEY=${HCAPTCHA_SECRET_KEY}
       - PORT=3001
     networks:
       - zoman-network
