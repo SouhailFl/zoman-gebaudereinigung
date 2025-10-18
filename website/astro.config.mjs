@@ -5,6 +5,12 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
   
+  // Environment variables
+  env: {
+    server: ['HCAPTCHA_SECRET_KEY'],
+    client: ['PUBLIC_HCAPTCHA_SITE_KEY', 'PUBLIC_EMAIL_SERVICE_URL'],
+  },
+  
   // Site configuration
   site: 'https://zoman-gebaudereinigung.de',
   
