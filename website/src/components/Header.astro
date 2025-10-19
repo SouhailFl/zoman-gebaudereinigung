@@ -3,7 +3,7 @@ interface Props {
   lang?: 'de' | 'en' | 'fr';
 }
 
-const { lang = 'de' } = Astro.props as Props;
+const { lang = 'de' } = Astro.props;
 
 const languages = [
   { code: 'de', name: 'Deutsch'},

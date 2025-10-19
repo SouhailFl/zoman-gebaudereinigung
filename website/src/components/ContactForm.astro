@@ -4,7 +4,7 @@ interface Props {
   lang?: 'de' | 'en' | 'fr';
 }
 
-const { lang = 'de' } = Astro.props as Props;
+const { lang = 'de' } = Astro.props;
 
 const formLabels: Record<string, any> = {
   de: {

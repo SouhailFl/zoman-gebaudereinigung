@@ -5,11 +5,9 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
   
-  // Environment variables
-  env: {
-    server: ['HCAPTCHA_SECRET_KEY'],
-    client: ['PUBLIC_HCAPTCHA_SITE_KEY', 'PUBLIC_EMAIL_SERVICE_URL'],
-  },
+  // Environment variables (Astro v5 uses PUBLIC_ prefix for client-side vars)
+  // Server-side: HCAPTCHA_SECRET_KEY
+  // Client-side: PUBLIC_HCAPTCHA_SITE_KEY, PUBLIC_EMAIL_SERVICE_URL
   
   // Site configuration
   site: 'https://zoman-gebaudereinigung.de',
