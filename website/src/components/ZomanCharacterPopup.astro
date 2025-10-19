@@ -1,0 +1,102 @@
+---
+// ZomanCharacterPopup.astro - Optimized version
+interface Props {
+  lang?: 'de' | 'en' | 'fr';
+}
+
+const { lang = 'de' } = Astro.props as Props;
+
+const messages: Record<string, string> = {
+  de: 'Klicken Sie auf den Chat-Widget, um mit unserem Website-Roboter zu sprechen!',
+  en: 'Click the chat widget to speak to our website robot for more info!',
+  fr: 'Cliquez sur le widget de chat pour parler à notre robot de site web pour plus d\'informations!'
+};
+
+const message = messages[lang] || messages.en;
+---
+
+<div id="character-popup" class="fixed bottom-20 right-6 z-40 opacity-0 pointer-events-none transition-opacity duration-500">
+  <div class="flex flex-col items-center gap-4">
+    <!-- Character Image - Lazy loaded -->
+    <div class="relative">
+      <img 
+        src="/images/zoman-character.webp" 
+        alt="Zoman Character Guide" 
+        class="w-48 h-56 md:w-56 md:h-64 drop-shadow-lg object-contain"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    
+    <!-- Message Bubble -->
+    <div class="bg-zoman-cyan text-white px-5 py-4 rounded-lg max-w-xs text-sm md:text-base text-center shadow-lg">
+      <p>{message}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+  }
+
+  #character-popup.show {
+    animation: slideIn 0.5s ease-out forwards;
+    pointer-events: auto;
+  }
+
+  #character-popup.hide {
+    animation: slideOut 0.5s ease-out forwards;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: prefer-reduced) {
+    #character-popup {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Defer character popup to avoid blocking main thread
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPopup);
+  } else {
+    requestIdleCallback ? requestIdleCallback(initPopup) : setTimeout(initPopup, 4000);
+  }
+  
+  function initPopup() {
+    const popup = document.getElementById('character-popup');
+    if (!popup) return;
+    
+    // Show after 4 seconds
+    setTimeout(() => {
+      popup.classList.add('show');
+      popup.classList.remove('hide');
+    }, 4000);
+
+    // Hide after 10 seconds total
+    setTimeout(() => {
+      popup.classList.remove('show');
+      popup.classList.add('hide');
+    }, 10000);
+  }
+</script>

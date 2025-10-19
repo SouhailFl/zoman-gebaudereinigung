@@ -2,16 +2,16 @@
 const { title, description, icon, link } = Astro.props;
 ---
 
-<div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-  <div class="text-5xl mb-4">{icon}</div>
+<div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 focus-within:ring-2 focus-within:ring-zoman-cyan">
+  <div class="text-5xl mb-4" aria-hidden="true">{icon}</div>
   <h3 class="text-xl font-bold mb-3 text-zoman-navy">{title}</h3>
-  <p class="text-gray-600 mb-4">{description}</p>
+  <p class="text-gray-700 mb-4">{description}</p>
   <a 
     href={link} 
-    class="inline-flex items-center text-zoman-cyan font-semibold hover:text-zoman-navy transition"
+    class="inline-flex items-center text-zoman-navy font-semibold hover:text-zoman-cyan transition focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded"
   >
     Mehr erfahren
-    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
     </svg>
   </a>

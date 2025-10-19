@@ -15,6 +15,54 @@ const PORT = process.env.PORT || 3002;
 app.use(cors());
 app.use(express.json());
 
+// Detect language from message
+function detectLanguage(message) {
+  const msg = message.toLowerCase();
+  
+  // French indicators
+  if (/(bonjour|salut|merci|oui|non|comment|prix|combien|je voudrais|pouvez-vous|comment|s'il vous plaît|réservation)/i.test(msg)) {
+    return 'fr';
+  }
+  
+  // English indicators
+  if (/(hello|hi|thanks|yes|no|how|price|cost|would like|can you|what|when|please|booking)/i.test(msg)) {
+    return 'en';
+  }
+  
+  // Default to German
+  return 'de';
+}
+
+// Detect if message is off-topic or inappropriate
+function isOffTopic(message) {
+  const msg = message.toLowerCase();
+  
+  // Off-topic keywords
+  const offTopicKeywords = [
+    'stupid', 'dumb', 'idiot', 'joke', 'funny', 'sport', 'football', 'pizza', 'weather', 'politics', 
+    'wetter', 'dumm', 'scherz', 'witzig', 'fußball', 'sport', 'pizza', 'politik',
+    'bête', 'stupide', 'blague', 'drôle', 'football', 'sport', 'pizza', 'politique'
+  ];
+  
+  return offTopicKeywords.some(keyword => msg.includes(keyword));
+}
+
+// Off-topic responses
+const OFF_TOPIC_RESPONSES = {
+  de: [
+    'Ich bin ein Reinigungsservice-Assistent und bin hier, um Ihnen bei Fragen zu unseren Dienstleistungen zu helfen! 😊 Haben Sie Fragen zur Haus-, Fenster- oder Solarreinigung?',
+    'Das liegt außerhalb meines Bereichs! Ich bin spezialisiert auf Reinigungsdienste von Zoman. Kann ich Ihnen etwas über unsere Services erzählen?'
+  ],
+  en: [
+    'I\'m here to help you with cleaning services! 😊 Do you have any questions about house cleaning, window cleaning, or solar panel cleaning?',
+    'That\'s outside my area of expertise! I\'m specialized in Zoman cleaning services. Can I tell you about our services?'
+  ],
+  fr: [
+    'Je suis ici pour vous aider avec nos services de nettoyage! 😊 Avez-vous des questions sur le nettoyage de maison, de vitres ou de panneaux solaires?',
+    'Cela sort de mon domaine! Je suis spécialisé dans les services de nettoyage Zoman. Puis-je vous parler de nos services?'
+  ]
+};
+
 // Mock AI responses - multilingual
 const MOCK_RESPONSES = {
   de: {
@@ -127,24 +175,6 @@ const MOCK_RESPONSES = {
   }
 };
 
-// Detect language from message
-function detectLanguage(message) {
-  const msg = message.toLowerCase();
-  
-  // French indicators
-  if (/(bonjour|salut|merci|oui|non|comment|prix|combien|je voudrais|pouvez-vous)/i.test(msg)) {
-    return 'fr';
-  }
-  
-  // English indicators
-  if (/(hello|hi|thanks|yes|no|how|price|cost|would like|can you|what|when)/i.test(msg)) {
-    return 'en';
-  }
-  
-  // Default to German
-  return 'de';
-}
-
 // Detect intent from message
 function detectIntent(message) {
   const msg = message.toLowerCase();
@@ -226,6 +256,26 @@ app.post('/api/chat', async (req, res) => {
 
     // Detect language and intent
     const language = detectLanguage(message);
+    
+    // Check if message is off-topic
+    if (isOffTopic(message)) {
+      const reply = getRandomResponse(OFF_TOPIC_RESPONSES[language]);
+      console.log(`💬 Mock Chat [${language}/OFF-TOPIC]: "${message.substring(0, 50)}..." → Redirecting to services`);
+      
+      return res.json({
+        success: true,
+        reply: reply,
+        needsContact: false,
+        mode: 'mock',
+        language: language,
+        usage: {
+          prompt_tokens: 0,
+          completion_tokens: 0,
+          total_tokens: 0,
+        }
+      });
+    }
+    
     const intent = detectIntent(message);
     const responses = MOCK_RESPONSES[language][intent] || MOCK_RESPONSES[language].default;
     const reply = getRandomResponse(responses);
@@ -271,169 +321,3 @@ app.listen(PORT, () => {
   console.log(`🌍 Languages: DE, EN, FR`);
   console.log(`✅ Health check: http://localhost:${PORT}/health`);
 });
-
-
-
-// To use openai, uncomment this code below and set OPENAI_API_KEY in .env
-
-/*
-import express from 'express';
-import OpenAI from 'openai';
-import cors from 'cors';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3002;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Initialize OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// System prompt - defines the AI agent's personality and knowledge
-const SYSTEM_PROMPT = `Du bist ein freundlicher Kundenservice-Assistent für Zoman Gebäudereinigung, ein professionelles Reinigungsunternehmen in Krefeld, Deutschland.
-
-DEINE AUFGABE:
-- Beantworte Fragen zu unseren Dienstleistungen freundlich und präzise
-- Gib hilfreiche Informationen über Preise und Ablauf
-- Leite bei konkreten Buchungen zum Kontaktformular weiter
-
-UNSERE DIENSTLEISTUNGEN:
-
-1. HAUSREINIGUNG
-   - Gründliche Reinigung von Häusern und Wohnungen
-   - Küche, Bad, Böden, Möbel abstauben
-   - Preis: Ab 25€ pro Stunde
-   - Individuelle Pakete verfügbar
-
-2. FENSTERREINIGUNG
-   - Streifenfreie Reinigung innen und außen
-   - Fensterrahmen und Fensterbänke inklusive
-   - Preis: Ab 3€ pro Fenster (Standard)
-   - Großflächen auf Anfrage
-
-3. SOLARANLAGENREINIGUNG
-   - Professionelle Photovoltaik-Reinigung
-   - Bis zu 25% mehr Energieausbeute
-   - Schonende, umweltfreundliche Reinigung
-   - Preis: Individuell nach Anlagengröße
-
-KONTAKTDATEN:
-- Telefon: +49 123 456 7890
-- E-Mail: info@zoman-gebaudereinigung.de
-- Standort: Krefeld, Deutschland
-- Öffnungszeiten: Mo-Fr 8-18 Uhr, Sa 9-14 Uhr
-
-WICHTIGE REGELN:
-- Antworte auf Deutsch, Englisch oder Französisch (je nach Kundensprache)
-- Sei präzise aber freundlich
-- Bei Terminanfragen: Verweise auf Kontaktformular oder Telefon
-- Bei Unsicherheit: Empfehle direkten Kontakt
-- Erfinde KEINE Informationen, die nicht im Prompt stehen
-- Halte Antworten kurz (2-4 Sätze maximal)`;
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', service: 'agent' });
-});
-
-// Chat endpoint
-app.post('/api/chat', async (req, res) => {
-  try {
-    const { message, history = [] } = req.body;
-
-    // Validation
-    if (!message || typeof message !== 'string') {
-      return res.status(400).json({
-        success: false,
-        error: 'Message is required',
-      });
-    }
-
-    // Limit message length
-    if (message.length > 500) {
-      return res.status(400).json({
-        success: false,
-        error: 'Message too long (max 500 characters)',
-      });
-    }
-
-    // Prepare messages for OpenAI
-    const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...history.slice(-10), // Only keep last 10 messages for context
-      { role: 'user', content: message },
-    ];
-
-    // Call OpenAI
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Cheaper and faster than GPT-4
-      messages: messages,
-      temperature: 0.7,
-      max_tokens: 200,
-    });
-
-    const reply = completion.choices[0].message.content;
-
-    // Detect if user needs contact (simple keyword detection)
-    const needsContactKeywords = [
-      'termin', 'buchen', 'buchung', 'appointment', 'book', 'rendez-vous',
-      'heute', 'morgen', 'nächste woche', 'today', 'tomorrow', 'next week',
-      'angebot', 'quote', 'besichtigung', 'visit'
-    ];
-    
-    const needsContact = needsContactKeywords.some(keyword => 
-      message.toLowerCase().includes(keyword)
-    );
-
-    console.log(`💬 Chat: "${message.substring(0, 50)}..." → "${reply.substring(0, 50)}..."`);
-
-    res.json({
-      success: true,
-      reply: reply,
-      needsContact: needsContact,
-      usage: {
-        prompt_tokens: completion.usage.prompt_tokens,
-        completion_tokens: completion.usage.completion_tokens,
-        total_tokens: completion.usage.total_tokens,
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Chat error:', error);
-    
-    // Handle OpenAI specific errors
-    if (error.code === 'insufficient_quota') {
-      return res.status(402).json({
-        success: false,
-        error: 'OpenAI quota exceeded. Please add credits.',
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: 'Failed to process chat message',
-      details: error.message,
-    });
-  }
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found' });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🤖 Agent service running on http://localhost:${PORT}`);
-  console.log(`🔑 OpenAI API key configured: ${process.env.OPENAI_API_KEY ? '✅' : '❌'}`);
-  console.log(`✅ Health check: http://localhost:${PORT}/health`);
-});
-*/

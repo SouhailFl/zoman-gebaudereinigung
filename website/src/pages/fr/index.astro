@@ -1,9 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ServiceCard from '../../components/ServiceCard.astro';
-import { translations } from '../../content/translations.js';
+import CloudParallax from '../../components/CloudParallax.astro';
+import ZomanCharacterPopup from '../../components/ZomanCharacterPopup.astro';
 
-const t = translations.fr;
 const currentLang = 'fr';
 ---
 
@@ -12,50 +12,82 @@ const currentLang = 'fr';
   description="Nettoyage professionnel de bâtiments, de vitres et de panneaux solaires à Krefeld et ses environs. Fiable, minutieux et ponctuel."
   lang={currentLang}
 >
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-zoman-navy to-zoman-cyan text-white py-20">
-    <div class="container mx-auto px-4">
+  <!-- Cloud Parallax Background -->
+  <CloudParallax />
+
+  <!-- Character Popup -->
+  <ZomanCharacterPopup lang="fr" />
+  <!-- Hero Section with Image Parallax -->
+  <section 
+    class="relative min-h-screen flex items-center justify-center overflow-hidden"
+    id="hero-section"
+    role="region"
+    aria-label="Hero section"
+  >
+    <!-- Parallax Background Image - optimized for mobile -->
+    <div 
+      class="absolute inset-0 bg-cover bg-center"
+      id="parallax-bg"
+      style="background-image: url('/images/modern-building-cleaning.webp'); background-position: center center; background-attachment: fixed; will-change: transform; background-size: cover;"
+    ></div>
+
+    <!-- Dark overlay for text readability -->
+    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+
+    <!-- Content Container -->
+    <div class="relative z-10 container mx-auto px-4 py-20 text-center md:text-left">
       <div class="max-w-3xl">
-        <h1 class="text-5xl font-bold mb-6">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight animate-fade-in" role="heading" aria-level="1">
           Zoman Nettoyage de Bâtiments
         </h1>
-        <p class="text-xl mb-8 text-gray-100">
+        <p class="text-xl md:text-2xl mb-8 text-white leading-relaxed animate-fade-in-delayed">
           Services de nettoyage professionnels pour votre maison et votre entreprise à Krefeld
         </p>
-        <div class="flex gap-4 flex-wrap">
+        <div class="flex gap-4 flex-wrap justify-center md:justify-start">
           <a 
             href="/fr/services" 
-            class="bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+            class="inline-block bg-white text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+            aria-label="Accédez à nos services"
           >
             Nos services
           </a>
           <a 
             href="/fr/contact" 
-            class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-zoman-navy transition"
+            class="inline-block border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-zoman-navy transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+            aria-label="Ouvrir le formulaire de contact"
           >
             Nous contacter
           </a>
         </div>
       </div>
     </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+      <div class="animate-bounce text-white" aria-hidden="true">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </div>
   </section>
 
   <!-- Services Overview -->
-  <section class="py-16 bg-gray-50">
+  <section class="py-16 bg-gray-50" id="services-overview" role="region" aria-label="Aperçu des services">
     <div class="container mx-auto px-4">
-      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-zoman-navy">
         Nos services
       </h2>
       <div class="grid md:grid-cols-3 gap-8">
         <ServiceCard 
-          title="Nettoyage de maison"
-          description="Nettoyage complet de votre maison ou appartement, de la cuisine à la salle de bain."
+          title="Nettoyage d'intérieur"
+          description="Nettoyage complet de votre maison ou appartement. De la cuisine à la salle de bains."
           icon="🏠"
-          link="/fr/services#nettoyage-maison"
+          link="/fr/services#nettoyage-interieur"
         />
         <ServiceCard 
           title="Nettoyage de vitres"
-          description="Nettoyage de vitres sans traces pour les particuliers et les entreprises, intérieur et extérieur."
+          description="Nettoyage de vitres sans traces pour les particuliers et les entreprises. Intérieur et extérieur."
           icon="🪟"
           link="/fr/services#nettoyage-vitres"
         />
@@ -63,58 +95,138 @@ const currentLang = 'fr';
           title="Nettoyage de panneaux solaires"
           description="Nettoyage professionnel de vos panneaux solaires pour une efficacité énergétique maximale."
           icon="☀️"
-          link="/fr/services#nettoyage-solaire"
+          link="/fr/services#nettoyage-panneaux"
         />
       </div>
     </div>
   </section>
 
   <!-- Why Choose Us -->
-  <section class="py-16">
+  <section class="py-16" id="why-us" role="region" aria-label="Pourquoi choisir Zoman">
     <div class="container mx-auto px-4">
-      <h2 class="text-3xl font-bold text-center mb-12 text-zoman-navy">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-zoman-navy">
         Pourquoi choisir Zoman ?
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="text-center">
-          <div class="text-4xl mb-4">✅</div>
-          <h3 class="font-semibold mb-2">Fiabilité</h3>
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-zoman-cyan" role="article">
+          <div class="text-4xl mb-4" aria-hidden="true">✅</div>
+          <h3 class="font-semibold mb-2 text-lg">Fiable</h3>
           <p class="text-gray-600">Ponctuel et respectueux des délais</p>
         </div>
-        <div class="text-center">
-          <div class="text-4xl mb-4">💎</div>
-          <h3 class="font-semibold mb-2">Qualité</h3>
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-zoman-cyan" role="article">
+          <div class="text-4xl mb-4" aria-hidden="true">💎</div>
+          <h3 class="font-semibold mb-2 text-lg">Qualité</h3>
           <p class="text-gray-600">Normes professionnelles</p>
         </div>
-        <div class="text-center">
-          <div class="text-4xl mb-4">🌱</div>
-          <h3 class="font-semibold mb-2">Écologique</h3>
-          <p class="text-gray-600">Produits de nettoyage respectueux de l'environnement</p>
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-zoman-cyan" role="article">
+          <div class="text-4xl mb-4" aria-hidden="true">🌱</div>
+          <h3 class="font-semibold mb-2 text-lg">Écologique</h3>
+          <p class="text-gray-600">Produits de nettoyage écologiques</p>
         </div>
-        <div class="text-center">
-          <div class="text-4xl mb-4">💰</div>
-          <h3 class="font-semibold mb-2">Équitable</h3>
-          <p class="text-gray-600">Tarifs transparents</p>
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-zoman-cyan" role="article">
+          <div class="text-4xl mb-4" aria-hidden="true">💰</div>
+          <h3 class="font-semibold mb-2 text-lg">Équitable</h3>
+          <p class="text-gray-600">Tarification transparente</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="bg-zoman-cyan text-white py-16">
+  <section class="bg-zoman-cyan text-white py-16" id="cta" role="region" aria-label="Appel à l'action">
     <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold mb-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">
         Prêt pour un environnement propre ?
       </h2>
-      <p class="text-xl mb-8">
-        Contactez-nous dès aujourd'hui pour une offre sans engagement
+      <p class="text-lg md:text-xl mb-8 text-white">
+        Contactez-nous dès aujourd'hui pour un devis sans engagement
       </p>
       <a 
         href="/fr/contact" 
-        class="inline-block bg-white text-zoman-cyan px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+        class="inline-block bg-white text-zoman-cyan px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+        aria-label="Demander un devis"
       >
         Demander un devis maintenant
       </a>
     </div>
   </section>
 </Layout>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+    will-change: opacity, transform;
+  }
+
+  .animate-fade-in-delayed {
+    animation: fade-in 0.6s ease-out 0.1s forwards;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  
+  /* Accessibility improvements */
+  .animate-bounce {
+    animation: none !important;
+  }
+  
+  @media (max-width: 639px) {
+    .animate-bounce {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Disable parallax on mobile entirely for performance
+  if (window.innerWidth < 768) {
+    const parallaxBg = document.getElementById('parallax-bg');
+    if (parallaxBg) {
+      parallaxBg.style.backgroundAttachment = 'scroll';
+    }
+  }
+  
+  // Optimized parallax scrolling with IntersectionObserver
+  const parallaxBg = document.getElementById('parallax-bg');
+  const heroSection = document.getElementById('hero-section');
+  
+  if (parallaxBg && heroSection && window.innerWidth >= 768) {
+    let isVisible = false;
+    let ticking = false;
+
+    // Intersection Observer to check if element is in view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isVisible = entry.isIntersecting;
+      });
+    }, { threshold: 0 });
+
+    observer.observe(heroSection);
+
+    const updateParallax = () => {
+      if (isVisible) {
+        const scrollY = window.scrollY;
+        const offset = scrollY * 0.5;
+        parallaxBg.style.transform = `translateY(${offset}px)`;
+      }
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true, capture: false });
+  }
+</script>

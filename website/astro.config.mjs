@@ -16,8 +16,9 @@ export default defineConfig({
   
   // Build configuration
   build: {
-    format: 'directory', // Creates /page/ instead of /page.html
-    inlineStylesheets: 'auto', // ✨ Inline critical CSS automatically for better LCP
+    format: 'directory',
+    inlineStylesheets: 'auto',
+    assets: '_assets',
   },
   
   // i18n configuration
@@ -32,8 +33,9 @@ export default defineConfig({
   // Output mode
   output: 'static',
   
-  // ✨ Enable HTML compression (safe optimization)
+  // Enable optimizations
   compressHTML: true,
+  prefetch: true,
 
   // Vite configuration
   vite: {
@@ -41,10 +43,7 @@ export default defineConfig({
       port: 4321,
     },
     build: {
-      // ✨ Split CSS per page for better caching
       cssCodeSplit: true,
-      
-      // ✨ Better file naming for cache busting
       rollupOptions: {
         output: {
           entryFileNames: 'entry.[hash].js',

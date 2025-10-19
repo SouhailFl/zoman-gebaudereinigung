@@ -53,14 +53,18 @@ const pathWithoutLang = currentUrl.replace(/^\/(de|en|fr)/, '') || '/';
   <meta property="twitter:image" content="https://zoman-gebaudereinigung.de/twitter-image.jpg" />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/webp" href="/images/zoman-logo.webp" />
+  <link rel="apple-touch-icon" href="/images/zoman-logo.webp" />
   
-  <!-- Fonts (Optional - using system fonts for performance) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload critical LCP image -->
+  <link rel="preload" as="image" href="/images/modern-building-cleaning.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="/images/zoman-logo.webp" />
+  
+  <!-- Preconnect to external domains if needed -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   
   <!-- JSON-LD Structured Data for Local Business -->
-  <script type="application/ld+json" set:html={JSON.stringify({
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Zoman Gebäudereinigung",
@@ -105,6 +109,8 @@ const pathWithoutLang = currentUrl.replace(/^\/(de|en|fr)/, '') || '/';
   <meta name="robots" content="index, follow" />
   <meta name="googlebot" content="index, follow" />
   <meta name="theme-color" content="#00B5FF" />
+  <meta name="color-scheme" content="light" />
+  <meta name="format-detection" content="telephone=no" />
 </head>
 
 <body class="flex flex-col min-h-screen">
