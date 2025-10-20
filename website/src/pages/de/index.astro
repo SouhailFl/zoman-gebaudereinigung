@@ -133,7 +133,7 @@ const currentLang = 'de';
   </section>
 
   <!-- CTA Section -->
-  <section class="bg-zoman-cyan text-white py-16" id="cta" role="region" aria-label="Handlungsaufruf">
+  <section class="bg-zoman-navy text-white py-16" id="cta" role="region" aria-label="Handlungsaufruf">
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">
         Bereit für eine saubere Umgebung?
@@ -143,7 +143,7 @@ const currentLang = 'de';
       </p>
       <a 
         href="/de/contact" 
-        class="inline-block bg-white text-zoman-cyan px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+        class="inline-block bg-zoman-cyan-light text-zoman-navy px-8 py-3 rounded-lg font-semibold hover:bg-zoman-cyan transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zoman-cyan-light"
         aria-label="Angebot anfordern"
       >
         Jetzt Angebot anfordern
@@ -187,46 +187,57 @@ const currentLang = 'de';
   }
 </style>
 
-<script>
-  // Disable parallax on mobile entirely for performance
-  if (window.innerWidth < 768) {
-    const parallaxBg = document.getElementById('parallax-bg');
-    if (parallaxBg) {
-      parallaxBg.style.backgroundAttachment = 'scroll';
+<script is:inline>
+  // Defer parallax initialization to after page load
+  const initParallax = () => {
+    // Disable parallax on mobile entirely for performance
+    if (window.innerWidth < 768) {
+      const parallaxBg = document.getElementById('parallax-bg');
+      if (parallaxBg) {
+        parallaxBg.style.backgroundAttachment = 'scroll';
+      }
+      return; // Exit early on mobile
     }
-  }
+    
+    // Optimized parallax scrolling with IntersectionObserver
+    const parallaxBg = document.getElementById('parallax-bg');
+    const heroSection = document.getElementById('hero-section');
+    
+    if (parallaxBg && heroSection) {
+      let isVisible = false;
+      let ticking = false;
+
+      // Intersection Observer to check if element is in view
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isVisible = entry.isIntersecting;
+        });
+      }, { threshold: 0 });
+
+      observer.observe(heroSection);
+
+      const updateParallax = () => {
+        if (isVisible) {
+          const scrollY = window.scrollY;
+          const offset = scrollY * 0.5;
+          parallaxBg.style.transform = `translateY(${offset}px)`;
+        }
+        ticking = false;
+      };
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      }, { passive: true, capture: false });
+    }
+  };
   
-  // Optimized parallax scrolling with IntersectionObserver
-  const parallaxBg = document.getElementById('parallax-bg');
-  const heroSection = document.getElementById('hero-section');
-  
-  if (parallaxBg && heroSection && window.innerWidth >= 768) {
-    let isVisible = false;
-    let ticking = false;
-
-    // Intersection Observer to check if element is in view
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        isVisible = entry.isIntersecting;
-      });
-    }, { threshold: 0 });
-
-    observer.observe(heroSection);
-
-    const updateParallax = () => {
-      if (isVisible) {
-        const scrollY = window.scrollY;
-        const offset = scrollY * 0.5;
-        parallaxBg.style.transform = `translateY(${offset}px)`;
-      }
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(updateParallax);
-        ticking = true;
-      }
-    }, { passive: true, capture: false });
+  // Initialize after page load to avoid blocking
+  if (document.readyState === 'complete') {
+    initParallax();
+  } else {
+    window.addEventListener('load', initParallax);
   }
 </script>

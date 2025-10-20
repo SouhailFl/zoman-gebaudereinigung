@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'zoman-cyan': '#00B5FF',
+        'zoman-cyan': '#0099CC',
+        'zoman-cyan-light': '#00B5FF',
         'zoman-navy': '#0B2545',
       },
       fontFamily: {

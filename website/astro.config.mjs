@@ -15,9 +15,10 @@ export default defineConfig({
   // Build configuration
   build: {
     format: 'directory',
-    inlineStylesheets: 'auto',
+    inlineStylesheets: 'always', // Inline critical CSS to reduce request chains
     assets: '_assets',
   },
+  
   
   // i18n configuration
   i18n: {
@@ -41,12 +42,14 @@ export default defineConfig({
       port: 4321,
     },
     build: {
-      cssCodeSplit: true,
+      cssCodeSplit: false, // Bundle all CSS together to reduce requests
+      modulePreload: { polyfill: false }, // Modern browsers only, reduce overhead
       rollupOptions: {
         output: {
           entryFileNames: 'entry.[hash].js',
           chunkFileNames: 'chunks/[name].[hash].js',
           assetFileNames: 'assets/[name].[hash][extname]',
+          manualChunks: undefined, // Reduce chunk splitting for fewer requests
         }
       },
     },
