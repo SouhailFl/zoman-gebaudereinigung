@@ -1,0 +1,29 @@
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to git - it contains secrets!
+
+# Your Azure subscription ID
+# Get it from: az account show --query id -o tsv
+azure_subscription_id = "YOUR_SUBSCRIPTION_ID_HERE"
+
+# Azure region (must be from allowed list)
+# Options: switzerlandnorth, italynorth, germanywestcentral, polandcentral, swedencentral
+azure_region = "germanywestcentral"
+
+# Environment name
+environment = "prod"
+
+# Number of VMs (1-3)
+vm_count = 1
+
+# VM size (B-series for development/small workloads)
+# Options: Standard_B1s, Standard_B2s (recommended), Standard_B2ms
+vm_size = "Standard_B2s"
+
+# SSH public key path
+# Generate with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
+ssh_public_key_path = "~/.ssh/id_rsa.pub"
+
+# Allowed SSH CIDR blocks
+# ⚠️ For security, replace 0.0.0.0/0 with your IP
+# Get your IP: curl https://api.ipify.org
+allowed_ssh_cidrs = ["0.0.0.0/0"]

@@ -1,0 +1,288 @@
+===========================================
+ZOMAN GEBÄUDEREINIGUNG - CLOUD DEPLOYMENT
+PROJECT SAVEPOINT - Last Updated: 2025-10-22
+===========================================
+
+PROJECT CONTEXT:
+- Bootcamp project (deadline: before December)
+- Real company: Zoman Gebäudereinigung (uncle's cleaning company)
+- Team: 2 fullstack devs + 2 IT technicians
+- Current phase: Infrastructure setup (Terraform + Ansible + CI/CD)
+
+TECH STACK:
+- Frontend: Astro (static site) - COMPLETED
+- Services: agent-service, email-service, website - COMPLETED
+- Infrastructure: Azure VMs + Terraform + Ansible
+- Monitoring: Prometheus + Grafana (pending)
+- CI/CD: GitHub Actions (pending)
+
+===========================================
+PHASE 1: TERRAFORM INFRASTRUCTURE SETUP
+===========================================
+
+STATUS: PARTIAL DEPLOYMENT (HANDOFF TO FRIEND) 🔄
+
+COMPLETED TASKS:
+[✓] 2025-10-21 - Created infrastructure/ folder structure
+[✓] 2025-10-21 - Created Terraform files:
+    - variables.tf (input variables)
+    - provider.tf (Azure provider config)
+    - main.tf (resource definitions)
+    - outputs.tf (deployment outputs)
+    - terraform.tfvars.example (template)
+    - terraform.tfvars (actual config - gitignored)
+[✓] 2025-10-21 - Configured .gitignore for Terraform secrets
+[✓] 2025-10-21 - Set up SSH keys at C:\Users\souha\.ssh\id_rsa.pub
+[✓] 2025-10-21 - Configured terraform.tfvars with:
+    - Azure subscription: 5b976d4c-d66a-43e5-8602-5f7c371b8c19 (friend's student account)
+    - Region: germanywestcentral
+    - Environment: prod
+    - VM count: 1 (Standard_B2s)
+    - Allowed SSH IP: 196.206.110.120/32
+[✓] 2025-10-22 - Ran terraform init
+[✓] 2025-10-22 - Successfully deployed partial infrastructure:
+    ✅ Resource Group (rg-zoman-prod)
+    ✅ Virtual Network (vnet-zoman-prod)
+    ✅ Subnet (subnet-zoman-prod)
+    ✅ Network Security Group with all rules
+    ✅ Public IP: 4.185.65.237 (static)
+    ✅ Network Interface (nic-zoman-prod-1)
+    ✅ Key Vault (kv-zoman-prod)
+    ✅ Storage Account (stzomanprod)
+    ❌ VM deployment failed (laptop-specific issue)
+
+CURRENT ISSUE (2025-10-22):
+- Terraform apply fails when trying to create the VM
+- Networking and supporting resources deployed successfully
+- Error: Region availability or VM size issues on Souha's laptop
+- Same configuration works on friend's laptop
+- Decision: Hand off VM deployment to friend
+
+HANDOFF STATUS:
+[✓] Created INFRASTRUCTURE_HANDOFF.md document
+[→] Friend will complete VM deployment
+[ ] Waiting for VM deployment confirmation
+[ ] Waiting for SSH access verification
+
+NEXT IMMEDIATE STEPS (FOR FRIEND):
+1. Update terraform.tfvars with friend's SSH key path and IP
+2. Run terraform plan (should show only VM to be created)
+3. Run terraform apply (deploy the VM)
+4. Verify SSH access: ssh -i ~/.ssh/id_rsa zomanadmin@4.185.65.237
+5. Notify Souha when complete
+
+INFRASTRUCTURE DETAILS:
+Resources deployed (8/9):
+- 1x Resource Group ✅
+- 1x Virtual Network ✅
+- 1x Subnet ✅
+- 1x Network Security Group ✅
+- 1x Public IP (4.185.65.237) ✅
+- 1x Network Interface ✅
+- 1x Key Vault ✅
+- 1x Storage Account ✅
+- 1x VM (Ubuntu 20.04 LTS, Standard_B2s) ❌ PENDING
+
+===========================================
+PHASE 2: ANSIBLE CONFIGURATION (PENDING)
+===========================================
+
+NEXT STEPS AFTER VM DEPLOYMENT:
+[ ] Create Ansible inventory file with VM IP
+[ ] Create Ansible playbooks for:
+    - Docker installation
+    - Docker Compose deployment
+    - Prometheus/Grafana setup
+    - SSL certificate (Let's Encrypt)
+    - Firewall configuration
+[ ] Test Ansible connectivity to VM
+[ ] Deploy Docker and Docker Compose
+[ ] Deploy application containers
+
+===========================================
+PHASE 3: CI/CD PIPELINE (PENDING)
+===========================================
+
+NEXT STEPS:
+[ ] Create .github/workflows/ for:
+    - Building Docker images (GitHub Actions)
+    - Pushing to Azure Container Registry
+    - Automated deployment via Ansible
+[ ] Configure GitHub Secrets for Azure authentication
+[ ] Test CI/CD pipeline with dummy commit
+
+===========================================
+PHASE 4: MONITORING (PENDING)
+===========================================
+
+NEXT STEPS:
+[ ] Deploy Prometheus + Grafana via Ansible
+[ ] Configure service metrics endpoints
+[ ] Create dashboards for:
+    - CPU/Memory usage
+    - Request rates
+    - Error rates
+[ ] Set up alerting rules
+
+===========================================
+KNOWN DECISIONS & CONSTRAINTS
+===========================================
+
+- Using friend's Azure student account (not personal account)
+- Scale: <1000 visitors/month (small workload)
+- Budget: Student subscription limits
+- VM Size: Standard_B2s (2 vCPU, 4GB RAM)
+- OS: Ubuntu 20.04 LTS
+- Skipping: Kubernetes, Teleport, NoIP, Kafka (unnecessary complexity)
+- TrueNAS Scale: On hold until production stable
+- Focus: Simple, working production deployment
+
+===========================================
+TROUBLESHOOTING NOTES
+===========================================
+
+SOUHA'S LAPTOP ISSUE (2025-10-22):
+- Terraform version: 1.13.4 (latest)
+- Azure CLI: Installed and working
+- Authentication: Working (can create other resources)
+- Problem: VM creation fails with region/size errors
+- Root cause: Unknown (laptop-specific issue)
+- Workaround: Use friend's laptop for VM deployment
+- Same Terraform config works on friend's laptop
+
+Known Working Configuration (Friend's Laptop):
+- Region: TBD (germanywestcentral or alternative)
+- VM Size: TBD (Standard_B2s or alternative)
+- SSH keys: Generated and stored correctly
+- IP whitelisting: 196.206.110.120/32 (Souha's IP)
+
+===========================================
+IMPORTANT FILES & LOCATIONS
+===========================================
+
+Key Files:
+- C:\Users\souha\zg\zoman-gebaudereinigung\infrastructure\terraform.tfvars (GITIGNORED)
+- C:\Users\souha\.ssh\id_rsa.pub (SSH public key)
+- C:\Users\souha\zg\zoman-gebaudereinigung\docker-compose.yml (local dev setup)
+- C:\Users\souha\zg\zoman-gebaudereinigung\INFRASTRUCTURE_HANDOFF.md (Friend's instructions)
+
+Repository Structure:
+zoman-gebaudereinigung/
+├── infrastructure/          # Terraform files
+│   ├── terraform.tfstate    # Has partial deployment
+│   └── terraform.tfvars     # Update with friend's config
+├── website/                 # Astro frontend
+├── agent-service/          # AI chat microservice
+├── email-service/          # Email microservice
+├── .github/workflows/      # CI/CD (to be created)
+├── docker-compose.yml      # Local dev environment
+├── claude_savepoint.txt    # This file
+└── INFRASTRUCTURE_HANDOFF.md  # Friend's guide
+
+===========================================
+TERRAFORM STATE INFO
+===========================================
+
+Current State File: infrastructure/terraform.tfstate
+- Serial: 18
+- Terraform Version: 1.13.4
+- Lineage: 07630a34-92ad-1ee6-7540-2519e1e021a0
+
+Deployed Resources (8):
+1. azurerm_resource_group.zoman
+2. azurerm_virtual_network.zoman
+3. azurerm_subnet.zoman
+4. azurerm_network_security_group.zoman
+5. azurerm_network_security_rule.allow_ssh
+6. azurerm_network_security_rule.allow_http
+7. azurerm_network_security_rule.allow_https
+8. azurerm_network_security_rule.allow_prometheus
+9. azurerm_network_security_rule.allow_grafana
+10. azurerm_public_ip.zoman[0]
+11. azurerm_network_interface.zoman[0]
+12. azurerm_key_vault.zoman
+13. azurerm_storage_account.zoman
+
+Pending Resources (1):
+1. azurerm_linux_virtual_machine.zoman[0] ❌
+
+Important Outputs:
+- vm_public_ips: ["4.185.65.237"]
+- vm_private_ips: ["10.0.1.4"]
+- resource_group_name: "rg-zoman-prod"
+- key_vault_name: "kv-zoman-prod"
+- storage_account_name: "stzomanprod"
+
+===========================================
+NEXT CONVERSATION CHECKLIST
+===========================================
+
+When starting a new chat, tell Claude to:
+1. Read this file first
+2. Check INFRASTRUCTURE_HANDOFF.md status
+3. Verify if friend completed VM deployment
+4. If VM deployed: proceed to Phase 2 (Ansible)
+5. If VM pending: wait for friend's confirmation
+6. Update this file after any changes
+
+===========================================
+HANDOFF CHECKLIST FOR FRIEND
+===========================================
+
+Before starting:
+[ ] Git pull latest changes
+[ ] Install Terraform 1.13.4+
+[ ] Install Azure CLI
+[ ] Login to Azure (az login)
+[ ] Set subscription: az account set --subscription 5b976d4c-d66a-43e5-8602-5f7c371b8c19
+
+During deployment:
+[ ] Update terraform.tfvars (SSH key path, IP address)
+[ ] Run terraform init (should skip, already done)
+[ ] Run terraform plan (verify only VM will be created)
+[ ] Run terraform apply
+[ ] Test SSH: ssh -i ~/.ssh/id_rsa zomanadmin@4.185.65.237
+
+After deployment:
+[ ] Document working region and VM size
+[ ] Push terraform.tfvars.example updates to Git
+[ ] Notify Souha via message/call
+[ ] Share any error messages if deployment fails
+
+===========================================
+CRITICAL REMINDERS
+===========================================
+
+1. DO NOT run 'terraform destroy' - we have working resources
+2. DO update your IP address in terraform.tfvars for SSH access
+3. DO backup terraform.tfstate before major changes
+4. DO test SSH immediately after VM deployment
+5. DO document the working configuration (region, VM size)
+6. DO keep the subscription ID the same (student account)
+7. DO verify with 'terraform plan' before 'terraform apply'
+8. DO reach out if stuck (don't struggle alone)
+
+===========================================
+SUCCESS METRICS
+===========================================
+
+Phase 1 Complete When:
+[✓] Resource group created
+[✓] Networking infrastructure deployed
+[✓] Security rules configured
+[✓] Public IP allocated
+[ ] VM deployed and running ← CURRENT BLOCKER
+[ ] SSH access verified
+[ ] Docker installed on VM
+[ ] Application containers deployed
+
+Timeline:
+- Started: 2025-10-21
+- Network deployed: 2025-10-22
+- VM deployment: IN PROGRESS (friend's laptop)
+- Expected completion: 2025-10-22 or 2025-10-23
+- Phase 2 start: After VM verification
+
+===========================================
+END OF SAVEPOINT
+===========================================
