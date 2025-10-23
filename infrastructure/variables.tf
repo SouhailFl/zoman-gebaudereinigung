@@ -1,4 +1,4 @@
-variable "azure_subscription_id" {
+variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
   sensitive   = true
@@ -51,7 +51,7 @@ variable "ssh_public_key_path" {
 variable "allowed_ssh_cidrs" {
   description = "CIDR blocks allowed for SSH"
   type        = list(string)
-  default     = ["0.0.0.0/0"] # ⚠️ Change this to your IP for security
+  default     = ["0.0.0.0/0"]
 }
 
 variable "docker_image_registry" {
