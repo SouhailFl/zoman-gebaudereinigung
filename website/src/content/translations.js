@@ -10,7 +10,7 @@ export const translations = {
     windowCleaningTitle: 'Fensterreinigung',
     solarCleaningTitle: 'Solaranlagenreinigung',
     
-    // Common
+    // Commons
     learnMore: 'Mehr erfahren',
     getQuote: 'Angebot anfordern',
     contactUs: 'Kontakt aufnehmen',
