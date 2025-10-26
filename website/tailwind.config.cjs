@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'zoman-cyan': '#00B5FF',
+        'zoman-cyan': '#0099CC',
+        'zoman-cyan-light': '#00B5FF',
         'zoman-navy': '#0B2545',
       },
       fontFamily: {
@@ -23,7 +24,22 @@ module.exports = {
         center: true,
         padding: '1rem',
       },
+      animation: {
+        'bounce': 'bounce 1s infinite',
+      },
+      keyframes: {
+        bounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-0.5rem)' },
+        },
+      },
     },
   },
   plugins: [],
+  safelist: [
+    'bg-opacity-40',
+    'text-5xl',
+    'md:text-6xl',
+    'focus:ring-2',
+  ],
 };

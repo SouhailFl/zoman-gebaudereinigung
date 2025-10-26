@@ -65,8 +65,10 @@ const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || 'http://lo
   <!-- Chat Button -->
   <button 
     id="chat-toggle"
-    class="bg-zoman-cyan text-white rounded-full p-4 shadow-lg hover:bg-opacity-90 transition-transform hover:scale-110"
+    class="bg-zoman-cyan text-white rounded-full p-4 shadow-lg hover:bg-opacity-90 transition-transform hover:scale-110 active:scale-95"
     aria-label={t.openChat}
+    aria-expanded="false"
+    aria-controls="chat-window"
   >
     <svg id="chat-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
@@ -76,11 +78,14 @@ const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || 'http://lo
     </svg>
   </button>
 
-  <!-- Chat Window -->
+  <!-- Chat Window - Lazy loaded -->
   <div 
     id="chat-window"
     class="hidden absolute bottom-20 right-0 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-lg shadow-2xl flex flex-col"
     style="height: 500px; max-height: calc(100vh - 200px);"
+    aria-label={t.title}
+    role="dialog"
+    aria-modal="true"
   >
     
     <!-- Header -->
@@ -128,136 +133,153 @@ const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || 'http://lo
 
 </div>
 
-<script define:vars={{ t, AGENT_SERVICE_URL, lang }}>
-  const chatToggle = document.getElementById('chat-toggle');
-  const chatWindow = document.getElementById('chat-window');
-  const chatIconOpen = document.getElementById('chat-icon-open');
-  const chatIconClose = document.getElementById('chat-icon-close');
-  const chatMessages = document.getElementById('chat-messages');
-  const chatForm = document.getElementById('chat-form');
-  const chatInput = document.getElementById('chat-input');
-  const chatSendBtn = document.getElementById('chat-send-btn');
-
-  // Store conversation history
-  let conversationHistory = [];
-
-  // Toggle chat window
-  chatToggle?.addEventListener('click', () => {
-    const isHidden = chatWindow?.classList.contains('hidden');
+<script define:vars={{ t, AGENT_SERVICE_URL, lang }} is:inline>
+  // Ultra-lightweight chat widget with deferred initialization
+  let chatWidget = null;
+  let isInitialized = false;
+  
+  function initChatWidget() {
+    if (isInitialized) return;
+    isInitialized = true;
     
-    if (isHidden) {
-      chatWindow?.classList.remove('hidden');
-      chatIconOpen?.classList.add('hidden');
-      chatIconClose?.classList.remove('hidden');
-      chatInput?.focus();
-    } else {
-      chatWindow?.classList.add('hidden');
-      chatIconOpen?.classList.remove('hidden');
-      chatIconClose?.classList.add('hidden');
-    }
-  });
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatIconOpen = document.getElementById('chat-icon-open');
+    const chatIconClose = document.getElementById('chat-icon-close');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
 
-  // Add message to chat
-  function addMessage(text, isUser = false) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
-    
-    const avatar = document.createElement('div');
-    avatar.className = `${isUser ? 'bg-gray-300' : 'bg-zoman-cyan'} text-white rounded-full p-2 flex-shrink-0`;
-    avatar.innerHTML = isUser 
-      ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>'
-      : '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>';
-    
-    const bubble = document.createElement('div');
-    bubble.className = `${isUser ? 'bg-zoman-cyan text-white' : 'bg-white'} rounded-lg p-3 shadow-sm max-w-[80%]`;
-    bubble.innerHTML = `<p class="text-sm whitespace-pre-wrap">${text}</p>`;
-    
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(bubble);
-    chatMessages?.appendChild(messageDiv);
-    
-    // Scroll to bottom
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
+    let conversationHistory = [];
 
-  // Show typing indicator
-  function showTyping() {
-    const typingDiv = document.createElement('div');
-    typingDiv.id = 'typing-indicator';
-    typingDiv.className = 'flex items-start gap-2';
-    typingDiv.innerHTML = `
-      <div class="bg-zoman-cyan text-white rounded-full p-2 flex-shrink-0">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
-      </div>
-      <div class="bg-white rounded-lg p-3 shadow-sm">
-        <p class="text-sm text-gray-500">${t.thinking}</p>
-      </div>
-    `;
-    chatMessages?.appendChild(typingDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function removeTyping() {
-    document.getElementById('typing-indicator')?.remove();
-  }
-
-  // Handle form submit
-  chatForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const message = chatInput?.value.trim();
-    if (!message) return;
-
-    // Add user message
-    addMessage(message, true);
-    conversationHistory.push({ role: 'user', content: message });
-    
-    // Clear input and disable
-    chatInput.value = '';
-    chatInput.disabled = true;
-    chatSendBtn.disabled = true;
-
-    // Show typing
-    showTyping();
-
-    try {
-      const response = await fetch(`${AGENT_SERVICE_URL}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: message,
-          history: conversationHistory
-        })
-      });
-
-      const data = await response.json();
+    // Toggle chat window
+    chatToggle?.addEventListener('click', () => {
+      const isHidden = chatWindow?.classList.contains('hidden');
+      chatToggle.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
       
-      removeTyping();
-
-      if (data.success) {
-        addMessage(data.reply, false);
-        conversationHistory.push({ role: 'assistant', content: data.reply });
-
-        // If needs contact, show prompt
-        if (data.needsContact) {
-          setTimeout(() => {
-            const contactPrompt = `${t.contactPrompt} <a href="/${lang}/contact" class="text-zoman-cyan underline font-semibold">${t.contactLink}</a>`;
-            addMessage(contactPrompt, false);
-          }, 500);
-        }
+      if (isHidden) {
+        chatWindow?.classList.remove('hidden');
+        chatIconOpen?.classList.add('hidden');
+        chatIconClose?.classList.remove('hidden');
+        chatInput?.focus();
       } else {
-        addMessage(t.error, false);
+        chatWindow?.classList.add('hidden');
+        chatIconOpen?.classList.remove('hidden');
+        chatIconClose?.classList.add('hidden');
       }
-    } catch (error) {
-      console.error('Chat error:', error);
-      removeTyping();
-      addMessage(t.error, false);
-    } finally {
-      chatInput.disabled = false;
-      chatSendBtn.disabled = false;
-      chatInput.focus();
+    });
+
+    function addMessage(text, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = `${isUser ? 'bg-gray-300' : 'bg-zoman-cyan'} text-white rounded-full p-2 flex-shrink-0`;
+      avatar.innerHTML = isUser 
+        ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>'
+        : '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>';
+      
+      const bubble = document.createElement('div');
+      bubble.className = `${isUser ? 'bg-zoman-cyan text-white' : 'bg-white'} rounded-lg p-3 shadow-sm max-w-[80%]`;
+      bubble.innerHTML = `<p class="text-sm whitespace-pre-wrap">${text}</p>`;
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(bubble);
+      chatMessages?.appendChild(messageDiv);
+      
+      if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
     }
-  });
+
+    function showTyping() {
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typing-indicator';
+      typingDiv.className = 'flex items-start gap-2';
+      typingDiv.innerHTML = `
+        <div class="bg-zoman-cyan text-white rounded-full p-2 flex-shrink-0">
+          <svg class="w-4 h-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+        </div>
+        <div class="bg-white rounded-lg p-3 shadow-sm">
+          <p class="text-sm text-gray-500">${t.thinking}</p>
+        </div>
+      `;
+      chatMessages?.appendChild(typingDiv);
+      if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+
+    function removeTyping() {
+      document.getElementById('typing-indicator')?.remove();
+    }
+
+    chatForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const message = chatInput?.value.trim();
+      if (!message) return;
+
+      addMessage(message, true);
+      conversationHistory.push({ role: 'user', content: message });
+      
+      if (chatInput) {
+        chatInput.value = '';
+        chatInput.disabled = true;
+      }
+      if (chatSendBtn) {
+        chatSendBtn.disabled = true;
+      }
+
+      showTyping();
+
+      try {
+        const response = await fetch(`${AGENT_SERVICE_URL}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: message,
+            history: conversationHistory
+          })
+        });
+
+        const data = await response.json();
+        removeTyping();
+
+        if (data.success) {
+          addMessage(data.reply, false);
+          conversationHistory.push({ role: 'assistant', content: data.reply });
+        } else {
+          addMessage(t.error, false);
+        }
+      } catch (error) {
+        removeTyping();
+        addMessage(t.error, false);
+      } finally {
+        if (chatInput) {
+          chatInput.disabled = false;
+          chatInput.focus();
+        }
+        if (chatSendBtn) {
+          chatSendBtn.disabled = false;
+        }
+      }
+    });
+  }
+  
+  // Initialize on first click or after 5 seconds
+  const chatToggle = document.getElementById('chat-toggle');
+  if (chatToggle) {
+    chatToggle.addEventListener('click', () => {
+      if (!isInitialized) initChatWidget();
+    }, { once: true });
+  }
+  
+  // Fallback: initialize after 5 seconds
+  setTimeout(() => {
+    if (!isInitialized) initChatWidget();
+  }, 5000);
 </script>
 
 <style>

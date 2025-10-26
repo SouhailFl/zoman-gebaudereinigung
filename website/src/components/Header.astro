@@ -3,7 +3,7 @@ interface Props {
   lang?: 'de' | 'en' | 'fr';
 }
 
-const { lang = 'de' } = Astro.props as Props;
+const { lang = 'de' } = Astro.props;
 
 const languages = [
   { code: 'de', name: 'Deutsch'},
@@ -84,10 +84,16 @@ const labels = a11yLabels[lang] || a11yLabels.de;
       <!-- Logo -->
       <a 
         href={`/${lang}/`} 
-        class="flex items-center gap-2 font-bold text-xl text-zoman-navy focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded-lg"
+        class="flex items-center gap-2 font-bold text-xl text-zoman-navy focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded-lg hover:opacity-80 transition-opacity"
         aria-label={labels.logo}
       >
-        <span class="text-2xl" aria-hidden="true">✨</span>
+        <img 
+          src="/images/zoman-logo.webp" 
+          alt="Zoman Logo" 
+          class="h-10 w-auto"
+          loading="eager"
+          fetchpriority="high"
+        />
         <span>Zoman</span>
       </a>
 

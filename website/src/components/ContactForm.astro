@@ -4,7 +4,7 @@ interface Props {
   lang?: 'de' | 'en' | 'fr';
 }
 
-const { lang = 'de' } = Astro.props as Props;
+const { lang = 'de' } = Astro.props;
 
 const formLabels: Record<string, any> = {
   de: {
@@ -57,7 +57,7 @@ const HCAPTCHA_SITE_KEY = import.meta.env.PUBLIC_HCAPTCHA_SITE_KEY || '';
 ---
 
 <!-- Load hCaptcha script -->
-<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<script src="https://js.hcaptcha.com/1/api.js" async defer is:inline></script>
 
 <form id="contact-form" method="POST" class="space-y-4">
   
@@ -140,7 +140,7 @@ const HCAPTCHA_SITE_KEY = import.meta.env.PUBLIC_HCAPTCHA_SITE_KEY || '';
 
 </form>
 
-<script define:vars={{ t, EMAIL_SERVICE_URL, HCAPTCHA_SITE_KEY }}>
+<script define:vars={{ t, EMAIL_SERVICE_URL, HCAPTCHA_SITE_KEY }} is:inline>
   const form = document.getElementById('contact-form');
   const statusDiv = document.getElementById('form-status');
   const submitBtn = document.getElementById('submit-btn');
