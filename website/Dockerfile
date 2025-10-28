@@ -1,6 +1,8 @@
 # Stage 1: Dependencies
 FROM node:18-alpine AS dependencies
 WORKDIR /app
+# Install git (required for some npm packages)
+RUN apk add --no-cache git
 # Copy package files
 COPY package*.json ./
 # Install all dependencies (including dev)
