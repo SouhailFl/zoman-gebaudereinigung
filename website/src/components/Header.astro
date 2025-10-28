@@ -81,17 +81,18 @@ const labels = a11yLabels[lang] || a11yLabels.de;
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between h-16">
       
-      <!-- Logo -->
+      <!-- Logo with responsive images -->
       <a 
         href={`/${lang}/`} 
         class="flex items-center gap-2 font-bold text-xl text-zoman-navy focus:outline-none focus:ring-2 focus:ring-zoman-cyan focus:rounded-lg hover:opacity-80 transition-opacity"
         aria-label={labels.logo}
       >
         <img 
-          src="/images/zoman-logo.webp" 
+          src="/images/zoman-logo.webp"
+          srcset="/images/zoman-logo-40.webp 1x, /images/zoman-logo-80.webp 2x, /images/zoman-logo-120.webp 3x"
           alt="Zoman Logo" 
-          width="60"
-          height="60"
+          width="40"
+          height="40"
           class="h-10 w-10"
           loading="eager"
           fetchpriority="high"
