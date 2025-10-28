@@ -495,6 +495,20 @@ RECENT UPDATES
   * Resource usage dashboards
   * Alert rules for pod failures
 
+**2025-10-28 - French Translation Fix:**
+- Fixed git merge conflict in French homepage (fr/index.astro)
+- Resolved duplicate ServiceCard entries with conflict markers
+- All three services now properly displayed on French version:
+  * Nettoyage d'intérieur (House Cleaning)
+  * Nettoyage de vitres (Window Cleaning)  
+  * Nettoyage de panneaux solaires (Solar Panel Cleaning)
+- Service links updated to match EN/DE structure
+- Added "learnMore" prop to French ServiceCard components
+
+Files Modified:
+- website/src/pages/fr/index.astro (removed <<<<<<< HEAD conflict markers)
+- ServiceCard component already supports learnMore prop for localization
+
 **2025-10-27 - Nginx Port 80 Configuration:**
 - Configured system Nginx to listen on port 80
 - Added reverse proxy to K3s NodePort 30080
@@ -1111,4 +1125,4 @@ Next Steps Priority:
 4. ⏳ Create Ansible playbook - PLANNED
 5. ⏳ Add custom domain - PLANNED
 
-Last Updated: 2025-10-27 (Added backup, SSL, and monitoring sections)
+Last Updated: 2025-10-28 (Fixed French translation, added missing services)
