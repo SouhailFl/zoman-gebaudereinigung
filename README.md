@@ -4,17 +4,22 @@
 
 **Languages:** German • English • French
 
+**Status:** 🚀 Production Deployment on Azure K3s | 🔄 CI/CD Troubleshooting in Progress
+
 ---
 
 ## ✨ Features
 
-- 🌐 **Static Website** - Astro + TailwindCSS with perfect SEO scores
+- 🧹 **Static Website** - Astro + TailwindCSS with perfect SEO scores
 - 🗣️ **Multilingual** - Full i18n support (DE/EN/FR)
 - 🤖 **AI Chat Widget** - OpenAI-powered customer support
 - 📧 **Contact Forms** - Mailtrap email integration
 - 🐳 **Containerized** - Docker-ready microservices
-- ☁️ **Cloud-Native** - Azure Static Web Apps + Container Apps
-- 🚀 **CI/CD** - Automated GitHub Actions pipelines
+- ☁️ **Cloud-Native** - Azure VM with K3s Kubernetes
+- 🔄 **CI/CD** - GitHub Actions (troubleshooting in progress)
+- 💾 **Backup** - TrueNAS Scale with RAID mirroring
+- 📊 **Monitoring** - Prometheus + Grafana (in progress)
+- 🔒 **SSL/TLS** - Let's Encrypt (in progress)
 
 ---
 
@@ -410,6 +415,336 @@ Push to `main` branch triggers automatic deployments:
 - `AZURE_CREDENTIALS` (service principal JSON)
 - `MAILTRAP_USER`, `MAILTRAP_PASS`
 - `OPENAI_API_KEY`
+
+---
+
+## 🚀 CI/CD Pipeline Status
+
+### ⚠️ Current Issue: Workflow Mismatch
+
+The existing GitHub Actions workflows in `.github/workflows/` are configured for **Azure Container Apps and Azure Static Web Apps**, but the actual deployment uses **Azure VM with K3s**. These are incompatible deployment targets.
+
+**Existing Workflows (Not Working):**
+1. `build-containers.yml` - Builds and pushes to GitHub Container Registry ✅
+2. `deploy-containers.yml` - Tries to deploy to Azure Container Apps ❌ (we don't use Container Apps)
+3. `deploy-website.yml` - Tries to deploy to Azure Static Web Apps ❌ (we don't use Static Web Apps)
+
+### 🔧 Solution Options
+
+#### Option 1: Disable Current Workflows (Quick Fix)
+```bash
+# Rename workflows to disable them
+mv .github/workflows/deploy-containers.yml .github/workflows/deploy-containers.yml.disabled
+mv .github/workflows/deploy-website.yml .github/workflows/deploy-website.yml.disabled
+
+# Keep build-containers.yml for reference
+```
+
+**Pros:** Quick, stops failed workflow runs  
+**Cons:** No automated deployment
+
+---
+
+#### Option 2: Create SSH-Based Deployment Workflow (Recommended)
+
+Create a new workflow that SSH into the VM and deploys:
+
+**Create `.github/workflows/deploy-to-k3s.yml`:**
+```yaml
+name: Deploy to K3s on Azure VM
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - 'email-service/**'
+      - 'agent-service/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}  # 20.250.146.204
+          username: ${{ secrets.VM_USERNAME }}  # zoman
+          password: ${{ secrets.VM_PASSWORD }}
+          script: |
+            cd ~/zoman-gebaudereinigung
+            git pull origin main
+            
+            # Rebuild images
+            docker build --no-cache \
+              --build-arg PUBLIC_HCAPTCHA_SITE_KEY=${{ secrets.PUBLIC_HCAPTCHA_SITE_KEY }} \
+              --build-arg PUBLIC_EMAIL_SERVICE_URL="" \
+              -t zoman-website ./website
+            
+            docker build -t zoman-email ./email-service
+            docker build -t zoman-agent ./agent-service
+            
+            # Import to K3s
+            docker save zoman-website -o /tmp/website.tar
+            docker save zoman-email -o /tmp/email.tar
+            docker save zoman-agent -o /tmp/agent.tar
+            
+            sudo k3s ctr images import /tmp/website.tar
+            sudo k3s ctr images import /tmp/email.tar
+            sudo k3s ctr images import /tmp/agent.tar
+            
+            # Restart pods
+            kubectl delete pod -l app=website
+            kubectl delete pod -l app=email-service
+            kubectl delete pod -l app=agent-service
+            
+            # Verify deployment
+            kubectl get pods
+            
+            echo "Deployment completed!"
+```
+
+**Required GitHub Secrets:**
+- `VM_HOST`: `20.250.146.204`
+- `VM_USERNAME`: `zoman`
+- `VM_PASSWORD`: Your VM password
+- `PUBLIC_HCAPTCHA_SITE_KEY`: `d83c3c7c-ff72-481c-91b2-3c243e728afc`
+
+**To Add Secrets:**
+1. Go to GitHub repo → Settings → Secrets and variables → Actions
+2. Click "New repository secret"
+3. Add each secret
+
+**Pros:**
+- Automated deployment on push to main
+- Uses existing VM setup
+- Simple and reliable
+
+**Cons:**
+- Uses password auth (consider SSH keys for better security)
+- VM must be running
+
+---
+
+#### Option 3: Manual Deployment (Current Method)
+
+Continue with manual deployment via SSH:
+
+```bash
+# On local machine
+git add .
+git commit -m "update"
+git push origin main
+
+# SSH to VM
+ssh zoman@20.250.146.204
+
+# On VM
+cd ~/zoman-gebaudereinigung
+git pull
+
+# Rebuild and deploy (see QUICK_START.md for full commands)
+./deploy.sh  # Or run manual commands
+```
+
+**Pros:**
+- Full control
+- No CI/CD complexity
+- Works immediately
+
+**Cons:**
+- Manual process
+- Requires SSH access
+- Slower iteration
+
+---
+
+### 🛠️ Recommended Action Plan
+
+1. **Short-term (Now):**
+   - Disable incompatible workflows (Option 1)
+   - Continue manual deployment (Option 3)
+   - Update documentation to reflect this
+
+2. **Medium-term (Next Sprint):**
+   - Implement SSH-based deployment (Option 2)
+   - Test workflow on feature branch first
+   - Add deployment status badge to README
+
+3. **Long-term (Future):**
+   - Create Ansible playbook for deployment
+   - Set up self-hosted GitHub Actions runner on VM
+   - Implement blue-green deployments
+
+### 📝 Workflow Status Summary
+
+| Workflow | Status | Action Needed |
+|----------|--------|---------------|
+| `build-containers.yml` | 🟡 Partial | Works but unused (pushes to GHCR) |
+| `deploy-containers.yml` | 🔴 Broken | Disable (wrong deployment target) |
+| `deploy-website.yml` | 🔴 Broken | Disable (wrong deployment target) |
+| `deploy-to-k3s.yml` | ⚪ Not Created | Create this (Option 2) |
+
+---
+
+## 🌐 Production Deployment
+
+### Current Setup (Azure VM with K3s + Nginx)
+
+The application is deployed on an Azure VM with:
+- **Kubernetes (K3s)** for container orchestration
+- **Nginx reverse proxy** handling external traffic on port 80 (HTTPS pending)
+- **Service routing** to internal Kubernetes services
+- **TrueNAS Scale** for automated backups with RAID mirroring
+- **Prometheus + Grafana** for monitoring (in progress)
+
+**Production URL:** http://zoman.switzerlandnorth.cloudapp.azure.com  
+**Direct IP:** http://20.250.146.204
+
+**Architecture:**
+```
+Internet (port 80)
+    ↓
+Nginx Reverse Proxy (VM host)
+    ↓
+Kubernetes Services (NodePort 30080)
+    ↓
+Microservices Pods
+  ├── website (Astro + Nginx)
+  ├── email-service (Express)
+  └── agent-service (Express)
+    ↓
+TrueNAS Scale (Backups)
+```
+
+**Key Configuration:**
+- Nginx listens on port 80 (standard HTTP)
+- Routes traffic to K3s services internally
+- No port numbers needed in URLs
+- Accessible via Azure DNS: `zoman.switzerlandnorth.cloudapp.azure.com`
+- SSL/HTTPS with Let's Encrypt (in progress)
+- Daily automated backups to TrueNAS Scale
+- Monitoring dashboards via Prometheus + Grafana (in progress)
+
+**Deployment Details:**
+- VM: Ubuntu 24.04 LTS (Standard B2as v2 - 2 vCPUs, 8GB RAM)
+- Region: Switzerland North
+- K3s: v1.33.5+k3s1 (single-node cluster)
+- Images: Built locally and imported to K3s containerd
+- Secrets: Managed via Kubernetes Secrets
+- Cost: ~$70/month (stop VM when not in use to save costs)
+
+---
+
+## 💾 Backup & Disaster Recovery
+
+### TrueNAS Scale Configuration
+
+**Setup:**
+- **Location:** On-premises server (local network)
+- **Storage:** RAID configuration with mirroring for redundancy
+- **Connection:** VPN tunnel to Azure VM (WireGuard/OpenVPN)
+- **Access:** Secure remote access via VPN only
+
+**Automated Backup Strategy:**
+- **Schedule:** Daily at 2 AM UTC
+- **Retention:** 7 daily, 4 weekly, 12 monthly snapshots
+- **Compression:** Enabled (saves storage space)
+- **Encryption:** AES-256 (data at rest)
+
+**What Gets Backed Up:**
+```bash
+/backups/zoman/
+├── k8s-manifests/        # All Kubernetes YAML files
+├── docker-images/        # Image tar archives
+├── configs/              # Nginx, .env files (encrypted)
+├── logs/                 # Application logs
+└── metadata/             # Checksums and backup info
+```
+
+**Disaster Recovery:**
+- **Recovery Time Objective (RTO):** < 30 minutes
+- **Monthly disaster recovery drills**
+- **Automated integrity checks (checksums)**
+- **Documented recovery procedures in `claude_savepoint.txt`**
+
+**Verify Backups:**
+```bash
+# Check backup logs
+tail -f /var/log/truenas-backup.log
+
+# List snapshots
+ls -lh /mnt/truenas/zoman/backups/
+
+# Verify checksums
+cd /mnt/truenas/zoman/backups/latest
+sha256sum -c checksums.txt
+```
+
+---
+
+## 📊 Monitoring Stack (In Progress)
+
+### Prometheus + Grafana Setup
+
+**Planned Deployment:**
+- **Prometheus:** Metrics collection from K3s cluster
+- **Grafana:** Visualization dashboards
+- **Namespace:** `monitoring`
+- **Access:**
+  - Prometheus: http://20.250.146.204:30090
+  - Grafana: http://20.250.146.204:30030
+
+**Metrics to Monitor:**
+- Pod CPU/Memory usage
+- Request latency
+- Error rates
+- Container restart counts
+- Node resource utilization
+
+**Alert Rules:**
+- Pod down for > 5 minutes
+- High memory usage (> 7GB)
+- Container restarts
+- Failed deployments
+
+**Deployment Status:** 🔄 Configuration in progress (see `claude_savepoint.txt` for manifests)
+
+---
+
+## 🔒 SSL/TLS Configuration (In Progress)
+
+### Let's Encrypt Setup
+
+**Planned Configuration:**
+- **Certificate Authority:** Let's Encrypt
+- **Tool:** Certbot with Nginx plugin
+- **Domain:** zoman.switzerlandnorth.cloudapp.azure.com
+- **Auto-Renewal:** Systemd timer (twice daily checks)
+
+**What Will Change:**
+- HTTP (port 80) → Redirects to HTTPS
+- HTTPS (port 443) → Main access point
+- **New URL:** https://zoman.switzerlandnorth.cloudapp.azure.com
+
+**Setup Commands:**
+```bash
+# Install certbot
+sudo apt install certbot python3-certbot-nginx -y
+
+# Generate certificates
+sudo certbot --nginx -d zoman.switzerlandnorth.cloudapp.azure.com
+
+# Test auto-renewal
+sudo certbot renew --dry-run
+```
+
+**Deployment Status:** 🔄 Pending setup (instructions in `claude_savepoint.txt`)
 
 ---
 
