@@ -56,7 +56,7 @@ const chatLabels: Record<string, {
 };
 
 const t = chatLabels[lang] || chatLabels.de;
-const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || 'http://localhost:3002';
+const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || '';
 ---
 
 <!-- Chat Widget Container -->
@@ -238,7 +238,7 @@ const AGENT_SERVICE_URL = import.meta.env.PUBLIC_AGENT_SERVICE_URL || 'http://lo
       showTyping();
 
       try {
-        const response = await fetch(`${AGENT_SERVICE_URL}/api/chat`, {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
