@@ -24,7 +24,7 @@ spec:
         env:
         # Default admin password (change after first login!)
         - name: GF_SECURITY_ADMIN_PASSWORD
-          value: "Zoman2024!SecureGrafana#"
+          value: "Zoman2026!SecureGrafana#"
         # Server settings
         - name: GF_SERVER_ROOT_URL
           value: "https://grafana.zoman.switzerlandnorth.cloudapp.azure.com"
@@ -46,8 +46,6 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /var/lib/grafana
-        - name: config
-          mountPath: /etc/grafana
         livenessProbe:
           httpGet:
             path: /api/health
@@ -62,8 +60,6 @@ spec:
           periodSeconds: 5
       volumes:
       - name: storage
-        emptyDir: {}
-      - name: config
         emptyDir: {}
 
 ---
