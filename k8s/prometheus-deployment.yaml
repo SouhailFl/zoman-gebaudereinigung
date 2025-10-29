@@ -86,7 +86,7 @@ spec:
       serviceAccountName: prometheus
       containers:
       - name: prometheus
-        image: prom/prometheus:latest
+        image: prom/prometheus:v2.54.1
         args:
           - '--config.file=/etc/prometheus/prometheus.yml'
           - '--storage.tsdb.path=/prometheus'
@@ -137,14 +137,13 @@ metadata:
   labels:
     app: prometheus
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: prometheus
   ports:
   - name: web
     port: 9090
     targetPort: 9090
-    nodePort: 30090
 
 ---
 # ServiceAccount for Prometheus to access Kubernetes API

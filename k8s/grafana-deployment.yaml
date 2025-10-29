@@ -17,17 +17,17 @@ spec:
     spec:
       containers:
       - name: grafana
-        image: grafana/grafana:latest
+        image: grafana/grafana:11.3.0
         ports:
         - containerPort: 3000
           name: web
         env:
         # Default admin password (change after first login!)
         - name: GF_SECURITY_ADMIN_PASSWORD
-          value: "admin123"
+          value: "Zoman2024!SecureGrafana#"
         # Server settings
         - name: GF_SERVER_ROOT_URL
-          value: "http://20.250.146.204:30030"
+          value: "https://grafana.zoman.switzerlandnorth.cloudapp.azure.com"
         - name: GF_SERVER_SERVE_FROM_SUB_PATH
           value: "false"
         # Anonymous access (optional - for demo purposes)
@@ -75,14 +75,13 @@ metadata:
   labels:
     app: grafana
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: grafana
   ports:
   - name: web
     port: 3000
     targetPort: 3000
-    nodePort: 30030
 
 ---
 # ConfigMap for Grafana provisioning (auto-configure Prometheus datasource)
