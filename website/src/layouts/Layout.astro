@@ -56,14 +56,14 @@ const pathWithoutLang = currentUrl.replace(/^\/(de|en|fr)/, '') || '/';
   <link rel="icon" type="image/webp" href="/images/zoman-logo.webp" />
   <link rel="apple-touch-icon" href="/images/zoman-logo.webp" />
   
-  <!-- Preload critical LCP image -->
-  <link rel="preload" as="image" href="/images/modern-building-cleaning.webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="/images/zoman-logo.webp" />
-  
-  <!-- Preconnect to external domains if needed -->
+  <!-- DNS Prefetch & Preconnect for faster loading (MUST be before other resources) -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- Preload critical LCP image only (logo removed to fix unused preload warning) -->
+  <link rel="preload" as="image" href="/images/modern-building-cleaning.webp" fetchpriority="high" />
   
   <!-- JSON-LD Structured Data for Local Business -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify({
