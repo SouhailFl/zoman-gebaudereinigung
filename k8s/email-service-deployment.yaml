@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-service
+  namespace: zoman
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: email-service
+  template:
+    metadata:
+      labels:
+        app: email-service
+    spec:
+      containers:
+      - name: email-service
+        image: zoman-email:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3001
+        env:
+        - name: MAILTRAP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: email-secrets
+              key: MAILTRAP_HOST
+        - name: MAILTRAP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: email-secrets
+              key: MAILTRAP_PORT
+        - name: MAILTRAP_USER
+          valueFrom:
+            secretKeyRef:
+              name: email-secrets
+              key: MAILTRAP_USER
+        - name: MAILTRAP_PASS
+          valueFrom:
+            secretKeyRef:
+              name: email-secrets
+              key: MAILTRAP_PASS
+        - name: HCAPTCHA_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: email-secrets
+              key: HCAPTCHA_SECRET_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-service
+  namespace: zoman
+spec:
+  selector:
+    app: email-service
+  ports:
+  - port: 3001
+    targetPort: 3001
+  type: ClusterIP

@@ -94,6 +94,8 @@ spec:
           - '--web.console.templates=/usr/share/prometheus/consoles'
           - '--storage.tsdb.retention.time=7d'
           - '--web.enable-lifecycle'
+          - '--web.external-url=https://zoman.switzerlandnorth.cloudapp.azure.com/prometheus'
+          - '--web.route-prefix=/prometheus'
         ports:
         - containerPort: 9090
           name: web

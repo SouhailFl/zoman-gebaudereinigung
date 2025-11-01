@@ -27,9 +27,9 @@ spec:
           value: "Zoman2026!SecureGrafana#"
         # Server settings
         - name: GF_SERVER_ROOT_URL
-          value: "https://grafana.zoman.switzerlandnorth.cloudapp.azure.com"
+          value: "https://zoman.switzerlandnorth.cloudapp.azure.com/grafana/"
         - name: GF_SERVER_SERVE_FROM_SUB_PATH
-          value: "false"
+          value: "true"
         # Anonymous access (optional - for demo purposes)
         - name: GF_AUTH_ANONYMOUS_ENABLED
           value: "false"
