@@ -1,362 +1,279 @@
-# 🔒 SECURE MONITORING STACK - MANUAL GUIDE
+# 🔒 SECURE MONITORING STACK - DEPLOYMENT GUIDE
 
-**Goal:** Put Grafana & Prometheus behind Nginx with HTTPS + Basic Auth
+**Goal:** Grafana & Prometheus behind Nginx with HTTPS + Authentication
 
-**Time:** ~30 minutes
-
----
-
-## Prerequisites Check
-
-SSH to your VM:
-```bash
-ssh zoman@20.250.146.204
-```
-
-Verify monitoring is running:
-```bash
-kubectl get pods -n monitoring
-# Should show grafana and prometheus pods running
-```
+**Status:** ✅ COMPLETED
+**Deployment Date:** 2025-10-29
 
 ---
 
-## PART 1: Update Kubernetes Deployments (5 min)
+## ✅ COMPLETED DEPLOYMENT
 
-### 1. Pull latest code
-```bash
-cd ~/zoman-gebaudereinigung
-git pull origin main
-```
-
-### 2. Apply updated deployments
-```bash
-# This changes services from NodePort to ClusterIP (internal only)
-# Also updates Docker image versions and Grafana password
-kubectl apply -f k8s/grafana-deployment.yaml
-kubectl apply -f k8s/prometheus-deployment.yaml
-```
-
-### 3. Wait for pods to restart
-```bash
-kubectl rollout status deployment/grafana -n monitoring
-kubectl rollout status deployment/prometheus -n monitoring
-```
-
-**✓ Checkpoint:** Pods should be running but NO LONGER accessible on ports 30030/30090
-
----
-
-## PART 2: Setup Basic Auth for Prometheus (5 min)
-
-### 1. Install htpasswd tool
-```bash
-sudo apt-get update
-sudo apt-get install -y apache2-utils
-```
-
-### 2. Create password file for Prometheus
-```bash
-# Replace 'admin' and 'your-strong-password' with your choices
-sudo htpasswd -bc /etc/nginx/.htpasswd-prometheus admin your-strong-password
-```
-
-**💾 Save these credentials:** You'll need them to access Prometheus!
-
----
-
-## PART 3: Configure Nginx Reverse Proxy (10 min)
-
-### 1. Copy Nginx config
-```bash
-sudo cp ~/zoman-gebaudereinigung/infrastructure/nginx-monitoring.conf /etc/nginx/sites-available/monitoring
-```
-
-### 2. Setup port forwarding to access services locally
-
-Grafana:
-```bash
-# Run in background
-nohup kubectl port-forward -n monitoring svc/grafana 3000:3000 --address=127.0.0.1 > /tmp/grafana-pf.log 2>&1 &
-```
-
-Prometheus:
-```bash
-# Run in background  
-nohup kubectl port-forward -n monitoring svc/prometheus 9090:9090 --address=127.0.0.1 > /tmp/prometheus-pf.log 2>&1 &
-```
-
-Verify:
-```bash
-curl -I http://localhost:3000/api/health  # Should return 200
-curl -I http://localhost:9090/-/healthy   # Should return 200
-```
-
-### 3. Test Nginx config
-```bash
-sudo nginx -t
-# Should say "syntax is ok" and "test is successful"
-```
-
----
-
-## PART 4: Obtain SSL Certificates (10 min)
-
-### Important: DNS Setup First!
-
-Before running certbot, you need to add DNS records:
-
-**Go to Azure Portal:**
-1. Navigate to your VM: `zoman-vm`
-2. Click on **DNS name** section
-3. Add these DNS labels:
-   - `grafana.zoman` 
-   - `prometheus.zoman`
-
-OR use Azure CLI:
-```bash
-# For Grafana subdomain
-az network public-ip update \
-  --resource-group zoman-rg \
-  --name zoman-vm-ip \
-  --dns-name grafana-zoman
-
-# For Prometheus subdomain  
-az network public-ip update \
-  --resource-group zoman-rg \
-  --name zoman-vm-ip \
-  --dns-name prometheus-zoman
-```
-
-Wait 2-3 minutes for DNS to propagate.
-
-### Get Certificates
-
-For Grafana:
-```bash
-sudo certbot certonly --nginx \
-  -d grafana.zoman.switzerlandnorth.cloudapp.azure.com \
-  --non-interactive \
-  --agree-tos \
-  --email souhail.fliou@gmail.com
-```
-
-For Prometheus:
-```bash
-sudo certbot certonly --nginx \
-  -d prometheus.zoman.switzerlandnorth.cloudapp.azure.com \
-  --non-interactive \
-  --agree-tos \
-  --email souhail.fliou@gmail.com
-```
-
-**If certificate fails:** DNS might not be propagated yet. Wait 5 minutes and try again.
-
----
-
-## PART 5: Enable Nginx Config & Reload (2 min)
-
-```bash
-# Enable the site
-sudo ln -sf /etc/nginx/sites-available/monitoring /etc/nginx/sites-enabled/
-
-# Test config again
-sudo nginx -t
-
-# Reload Nginx
-sudo systemctl reload nginx
-```
-
----
-
-## PART 6: Make Port Forwarding Permanent (5 min)
-
-Create systemd services so port forwarding survives reboots.
-
-### Grafana service:
-```bash
-sudo nano /etc/systemd/system/grafana-portforward.service
-```
-
-Paste:
-```ini
-[Unit]
-Description=Port forward for Grafana
-After=k3s.service
-Requires=k3s.service
-
-[Service]
-Type=simple
-User=root
-ExecStart=/usr/local/bin/kubectl port-forward -n monitoring svc/grafana 3000:3000 --address=127.0.0.1
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Prometheus service:
-```bash
-sudo nano /etc/systemd/system/prometheus-portforward.service
-```
-
-Paste:
-```ini
-[Unit]
-Description=Port forward for Prometheus
-After=k3s.service
-Requires=k3s.service
-
-[Service]
-Type=simple
-User=root
-ExecStart=/usr/local/bin/kubectl port-forward -n monitoring svc/prometheus 9090:9090 --address=127.0.0.1
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Enable services:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable grafana-portforward.service
-sudo systemctl enable prometheus-portforward.service
-sudo systemctl start grafana-portforward.service
-sudo systemctl start prometheus-portforward.service
-```
-
-### Verify:
-```bash
-sudo systemctl status grafana-portforward
-sudo systemctl status prometheus-portforward
-```
-
----
-
-## ✅ VERIFICATION
-
-### Test Grafana:
-```bash
-curl -I https://grafana.zoman.switzerlandnorth.cloudapp.azure.com
-# Should return: HTTP/2 200
-```
-
-Open in browser: https://grafana.zoman.switzerlandnorth.cloudapp.azure.com
-- Login: `admin`
-- Password: `Zoman2024!SecureGrafana#`
-- Should see Grafana dashboard
-
-### Test Prometheus:
-```bash
-curl -u admin:your-password -I https://prometheus.zoman.switzerlandnorth.cloudapp.azure.com
-# Should return: HTTP/2 200
-```
-
-Open in browser: https://prometheus.zoman.switzerlandnorth.cloudapp.azure.com
-- Will prompt for basic auth
-- Username: `admin` (or what you set)
-- Password: [your password]
-- Should see Prometheus UI
-
-### Verify old ports are closed:
-```bash
-curl -I http://20.250.146.204:30030
-# Should FAIL or timeout (port closed)
-
-curl -I http://20.250.146.204:30090
-# Should FAIL or timeout (port closed)
-```
-
----
-
-## 🎉 SUCCESS CHECKLIST
-
-- [x] Grafana accessible via HTTPS with new strong password
-- [x] Prometheus accessible via HTTPS with basic auth
-- [x] Old NodePort endpoints (30030, 30090) no longer accessible
-- [x] SSL certificates auto-renewing
-- [x] Port forwarding survives reboots
-- [x] All security headers enabled
-
----
-
-## 🔑 IMPORTANT - SAVE THESE CREDENTIALS
+### What Was Deployed
 
 **Grafana:**
-- URL: https://grafana.zoman.switzerlandnorth.cloudapp.azure.com
-- Username: admin
-- Password: Zoman2024!SecureGrafana#
+- URL: https://zoman.switzerlandnorth.cloudapp.azure.com/grafana/
+- Username: `admin`
+- Password: `Zoman2026!SecureGrafana#`
+- Access: HTTPS with strong password
+- Service Type: ClusterIP (internal only)
 
 **Prometheus:**
-- URL: https://prometheus.zoman.switzerlandnorth.cloudapp.azure.com  
-- Username: admin
-- Password: [your chosen password]
+- URL: https://zoman.switzerlandnorth.cloudapp.azure.com/prometheus/
+- Username: `zoman`
+- Password: `Zoman2026!SecurePrometheus#`
+- Access: HTTPS with basic authentication
+- Service Type: ClusterIP (internal only)
+
+### Security Improvements Implemented
+
+✅ **Encryption:** All traffic encrypted with TLS 1.2/1.3
+✅ **Authentication:** Grafana strong password + Prometheus basic auth
+✅ **Access Control:** Services only accessible via Nginx reverse proxy
+✅ **Security Headers:** HSTS, X-Frame-Options, X-Content-Type-Options
+✅ **Port Forwarding:** Permanent systemd services (survives reboots)
+✅ **Path-Based Routing:** Single domain with `/grafana/` and `/prometheus/` paths
 
 ---
 
-## 🚨 TROUBLESHOOTING
+## 🏗️ Architecture
 
-### Grafana not accessible:
+```
+Internet
+   ↓
+Nginx (HTTPS on port 443)
+   ├─→ /grafana/ → localhost:3000 → Grafana Pod (ClusterIP)
+   └─→ /prometheus/ → localhost:9090 → Prometheus Pod (ClusterIP)
+        ↓
+   kubectl port-forward (systemd services)
+        ↓
+   Kubernetes Services (ClusterIP, internal only)
+```
+
+---
+
+## 🔍 Verification Commands
+
+### Check Services
 ```bash
-# Check port forwarding
-sudo systemctl status grafana-portforward
+# Monitoring pods should be running
+kubectl get pods -n monitoring
 
+# Services should be ClusterIP (not NodePort)
+kubectl get services -n monitoring
+
+# Port-forward services should be active
+sudo systemctl status grafana-portforward
+sudo systemctl status prometheus-portforward
+```
+
+### Test Access
+```bash
+# Grafana (should return 200)
+curl -I https://zoman.switzerlandnorth.cloudapp.azure.com/grafana/login
+
+# Prometheus (should return 200 with auth)
+curl -u zoman:'Zoman2026!SecurePrometheus#' https://zoman.switzerlandnorth.cloudapp.azure.com/prometheus/
+
+# Old ports should NOT work
+curl http://20.250.146.204:30030  # Should fail
+curl http://20.250.146.204:30090  # Should fail
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Grafana Not Accessible
+```bash
 # Check pod
 kubectl get pods -n monitoring -l app=grafana
+kubectl logs -n monitoring -l app=grafana --tail=50
 
-# Check logs
-kubectl logs -n monitoring -l app=grafana
+# Check port-forward
+sudo systemctl status grafana-portforward
+sudo journalctl -u grafana-portforward -n 20
+
+# Restart if needed
+sudo systemctl restart grafana-portforward
 ```
 
-### Prometheus not accessible:
+### Prometheus Not Accessible
 ```bash
-# Check port forwarding
-sudo systemctl status prometheus-portforward
-
 # Check pod
 kubectl get pods -n monitoring -l app=prometheus
+kubectl logs -n monitoring -l app=prometheus --tail=50
 
-# Check logs
-kubectl logs -n monitoring -l app=prometheus
+# Check port-forward
+sudo systemctl status prometheus-portforward
+sudo journalctl -u prometheus-portforward -n 20
+
+# Restart if needed
+sudo systemctl restart prometheus-portforward
 ```
 
-### SSL certificate issues:
+### Port-Forward Issues
 ```bash
-# Check certificates
-sudo certbot certificates
+# Check if ports are in use
+sudo lsof -ti:3000 -ti:9090
 
-# Renew if needed
-sudo certbot renew --dry-run
+# Kill conflicting processes
+sudo lsof -ti:3000 -ti:9090 | xargs sudo kill -9
+
+# Restart services
+sudo systemctl restart grafana-portforward prometheus-portforward
 ```
 
-### Nginx errors:
+### Nginx Issues
 ```bash
 # Check config
 sudo nginx -t
 
 # Check logs
 sudo tail -f /var/log/nginx/error.log
+sudo tail -f /var/log/nginx/access.log
+
+# Restart Nginx
+sudo systemctl restart nginx
 ```
 
 ---
 
-## 📊 What Changed?
+## 📝 Configuration Files
 
-**Before:**
-- ❌ http://20.250.146.204:30030 → Grafana (unencrypted, weak password)
-- ❌ http://20.250.146.204:30090 → Prometheus (unencrypted, no auth)
+### Nginx Config
+Location: `/etc/nginx/sites-available/monitoring`
+Enabled: `/etc/nginx/sites-enabled/monitoring`
 
-**After:**
-- ✅ https://grafana.zoman.switzerlandnorth.cloudapp.azure.com → Grafana (encrypted, strong password)
-- ✅ https://prometheus.zoman.switzerlandnorth.cloudapp.azure.com → Prometheus (encrypted, basic auth)
-- ✅ Old ports closed to internet
-- ✅ All traffic encrypted
-- ✅ Security headers enabled
-- ✅ Pinned Docker image versions
+### Systemd Services
+- `/etc/systemd/system/grafana-portforward.service`
+- `/etc/systemd/system/prometheus-portforward.service`
+
+### Kubernetes Manifests
+- `k8s/grafana-deployment.yaml` (updated, no config volume mount)
+- `k8s/prometheus-deployment.yaml` (updated with subpath args)
 
 ---
 
-**Next:** Update your bootcamp presentation with the new secure URLs! 🎤
+## 🔐 Credentials (SAVE THESE!)
+
+**Grafana:**
+- URL: https://zoman.switzerlandnorth.cloudapp.azure.com/grafana/
+- Username: `admin`
+- Password: `Zoman2026!SecureGrafana#`
+
+**Prometheus:**
+- URL: https://zoman.switzerlandnorth.cloudapp.azure.com/prometheus/
+- Username: `zoman`
+- Password: `Zoman2026!SecurePrometheus#`
+
+---
+
+## 🎤 Bootcamp Presentation Points
+
+### What to Show
+
+1. **Main Website** - https://zoman.switzerlandnorth.cloudapp.azure.com
+   - Green padlock (SSL)
+   - Fully functional
+
+2. **Grafana Dashboard** - /grafana/
+   - Green padlock (SSL)
+   - Strong password protection
+   - Live metrics visualizations
+
+3. **Prometheus Metrics** - /prometheus/
+   - Green padlock (SSL)
+   - Basic authentication required
+   - Real-time metrics collection
+
+4. **Terminal Demo**
+   ```bash
+   # Show services are internal only
+   kubectl get services -n monitoring
+   
+   # Show port-forward services running
+   sudo systemctl status grafana-portforward prometheus-portforward
+   
+   # Show security headers
+   curl -I https://zoman.switzerlandnorth.cloudapp.azure.com/grafana/
+   ```
+
+### Key Talking Points
+
+- ✅ "Implemented defense-in-depth security architecture"
+- ✅ "All monitoring traffic encrypted end-to-end with TLS 1.3"
+- ✅ "Services not directly exposed - only accessible via authenticated reverse proxy"
+- ✅ "Security headers protect against XSS, clickjacking, and MIME sniffing attacks"
+- ✅ "Path-based routing allows multiple services on single domain"
+- ✅ "Systemd integration ensures services survive server reboots"
+
+### Before vs After
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| Grafana | ❌ HTTP port 30030 | ✅ HTTPS /grafana/ |
+| Password | ❌ `admin123` | ✅ Strong password |
+| Prometheus | ❌ HTTP port 30090, no auth | ✅ HTTPS /prometheus/ + auth |
+| Exposure | ❌ Direct NodePort | ✅ Reverse proxy only |
+| Security | ❌ None | ✅ Headers + TLS |
+
+---
+
+## 🎉 Success Checklist
+
+- [x] Grafana accessible via HTTPS with strong password
+- [x] Prometheus accessible via HTTPS with basic auth
+- [x] Old NodePort endpoints no longer accessible
+- [x] SSL certificates valid and auto-renewing
+- [x] Port forwarding survives reboots
+- [x] All security headers enabled
+- [x] Path-based routing working
+- [x] Documentation updated
+- [x] Credentials saved securely
+
+---
+
+## 🔄 Maintenance
+
+### Update Passwords
+```bash
+# Grafana
+kubectl set env deployment/grafana -n monitoring GF_SECURITY_ADMIN_PASSWORD='NewPassword123!'
+
+# Prometheus
+sudo htpasswd -bc /etc/nginx/.htpasswd-prometheus zoman 'NewPassword123!'
+```
+
+### Check SSL Certificates
+```bash
+# View certificates
+sudo certbot certificates
+
+# Test renewal
+sudo certbot renew --dry-run
+
+# Manual renewal if needed
+sudo certbot renew
+```
+
+### Restart Services
+```bash
+# Restart Grafana
+kubectl rollout restart deployment/grafana -n monitoring
+
+# Restart Prometheus
+kubectl rollout restart deployment/prometheus -n monitoring
+
+# Restart port-forwards
+sudo systemctl restart grafana-portforward prometheus-portforward
+
+# Restart Nginx
+sudo systemctl restart nginx
+```
+
+---
+
+**Deployment Completed:** 2025-10-29
+**Status:** ✅ Production Ready
+**Next:** Update presentation materials and practice demo

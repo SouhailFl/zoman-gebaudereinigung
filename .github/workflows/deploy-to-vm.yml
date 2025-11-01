@@ -1,0 +1,49 @@
+name: Deploy to VM
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'website/**'
+      - 'email-service/**'
+      - 'agent-service/**'
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to VM via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        script: |
+          cd ~/zoman-gebaudereinigung
+          git pull origin main
+          
+          # Build Docker images
+          docker build -t zoman-website:latest ./website --no-cache
+          docker build -t zoman-email:latest ./email-service --no-cache
+          docker build -t zoman-agent:latest ./agent-service --no-cache
+          
+          # Import to K3s
+          docker save zoman-website:latest -o /tmp/website.tar
+          docker save zoman-email:latest -o /tmp/email.tar
+          docker save zoman-agent:latest -o /tmp/agent.tar
+          
+          sudo k3s ctr images import /tmp/website.tar
+          sudo k3s ctr images import /tmp/email.tar
+          sudo k3s ctr images import /tmp/agent.tar
+          
+          rm /tmp/*.tar
+          
+          # Restart all deployments
+          kubectl rollout restart deployment/website deployment/email-service deployment/agent-service -n zoman
+          
+          # Wait for rollout
+          kubectl rollout status deployment/website -n zoman --timeout=300s
+          
+          echo "✅ Deployment complete!"
